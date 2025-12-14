@@ -1,0 +1,531 @@
+openapi: 3.0.1
+info:
+  title: AI-Powered Physical AI & Humanoid Robotics Textbook API
+  description: API for the AI-powered textbook platform that teaches Physical AI & Humanoid Robotics with RAG chatbot, personalization, and Urdu translation capabilities
+  version: 1.0.0
+servers:
+  - url: https://api.ai-textbook-platform.com
+    description: Production server
+  - url: https://staging.api.ai-textbook-platform.com
+    description: Staging server
+
+paths:
+  /auth/signup:
+    post:
+      summary: User registration
+      description: Register a new user with their background information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSignup'
+      responses:
+        '201':
+          description: User successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid input
+
+  /auth/login:
+    post:
+      summary: User login
+      description: Authenticate user and return session token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Successfully logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token for authentication
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid credentials
+
+  /content:
+    get:
+      summary: Get all textbook content by modules
+      description: Retrieve the structure and metadata for all textbook content
+      responses:
+        '200':
+          description: Successfully retrieved content structure
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookContent'
+
+  /content/{id}:
+    get:
+      summary: Get specific content
+      description: Retrieve a specific chapter or section of the textbook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookContent'
+        '404':
+          description: Content not found
+
+  /content/{id}/translate:
+    post:
+      summary: Translate content to Urdu
+      description: Translate a specific chapter or section to Urdu
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target_language:
+                  type: string
+                  default: 'ur'
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Successfully translated content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationCache'
+        '429':
+          description: Translation rate limit exceeded
+
+  /content/{id}/personalize:
+    get:
+      summary: Get personalized content
+      description: Retrieve content adapted to user's background
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Successfully retrieved personalized content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookContent'
+        '404':
+          description: Content or personalization not found
+
+  /chat/sessions:
+    post:
+      summary: Create a new chat session
+      description: Start a new conversation with the AI chatbot
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                selected_text:
+                  type: string
+                mode:
+                  type: string
+                  enum: [general, selected-text-only]
+                  default: general
+      responses:
+        '201':
+          description: Chat session successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatSession'
+
+  /chat/sessions/{sessionId}/messages:
+    post:
+      summary: Send a message in a chat session
+      description: Send a user message and receive an AI response
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: The message content to send
+              required:
+                - content
+      responses:
+        '200':
+          description: Successfully received AI response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessage'
+        '429':
+          description: Chat rate limit exceeded
+
+  /progress:
+    get:
+      summary: Get user's progress
+      description: Retrieve the user's progress across all chapters
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Successfully retrieved user progress
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Progress'
+
+  /progress/{contentId}:
+    post:
+      summary: Update user's progress
+      description: Update progress for a specific content item
+      parameters:
+        - name: contentId
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProgressUpdate'
+      responses:
+        '200':
+          description: Successfully updated progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Progress'
+
+  /user/profile:
+    get:
+      summary: Get user profile
+      description: Retrieve the user's profile with background information
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Successfully retrieved user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      summary: Update user profile
+      description: Update the user's profile and background information
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: Successfully updated user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+components:
+  schemas:
+    UserSignup:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        software_experience:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        hardware_experience:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        math_physics_level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        learning_goals:
+          type: string
+      required:
+        - email
+        - password
+        - software_experience
+        - hardware_experience
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        software_experience:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        hardware_experience:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        math_physics_level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        learning_goals:
+          type: string
+        personalization_settings:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        last_login:
+          type: string
+          format: date-time
+
+    UserUpdate:
+      type: object
+      properties:
+        software_experience:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        hardware_experience:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        math_physics_level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        learning_goals:
+          type: string
+
+    BookContent:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        module:
+          type: string
+          enum: [ROS 2, Gazebo & Unity, NVIDIA Isaac, VLA]
+        chapter_number:
+          type: integer
+        content_type:
+          type: string
+        content:
+          type: string
+        version:
+          type: string
+        vector_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        authors:
+          type: array
+          items:
+            type: string
+        learning_objectives:
+          type: array
+          items:
+            type: string
+
+    ChatSession:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        session_start:
+          type: string
+          format: date-time
+        session_end:
+          type: string
+          format: date-time
+        selected_text:
+          type: string
+        mode:
+          type: string
+          enum: [general, selected-text-only]
+        is_active:
+          type: boolean
+
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: string
+        session_id:
+          type: string
+        sender_type:
+          type: string
+          enum: [user, ai]
+        content:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        context_used:
+          type: string
+
+    Progress:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        content_id:
+          type: string
+        progress_percentage:
+          type: number
+          minimum: 0
+          maximum: 100
+        time_spent_seconds:
+          type: integer
+        last_accessed:
+          type: string
+          format: date-time
+        completed_exercises:
+          type: array
+          items:
+            type: string
+        bookmark_position:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ProgressUpdate:
+      type: object
+      properties:
+        progress_percentage:
+          type: number
+          minimum: 0
+          maximum: 100
+        time_spent_seconds:
+          type: integer
+        completed_exercises:
+          type: array
+          items:
+            type: string
+        bookmark_position:
+          type: integer
+
+    TranslationCache:
+      type: object
+      properties:
+        id:
+          type: string
+        content_id:
+          type: string
+        target_language:
+          type: string
+        translated_content:
+          type: string
+        translation_method:
+          type: string
+          enum: [ai, human, ai_with_review]
+        quality_score:
+          type: number
+          minimum: 0
+          maximum: 1
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: Authentication
+    description: User registration and login endpoints
+  - name: Content
+    description: Textbook content retrieval and manipulation
+  - name: Chat
+    description: AI chatbot functionality
+  - name: Progress
+    description: User progress tracking
+  - name: User
+    description: User profile management
