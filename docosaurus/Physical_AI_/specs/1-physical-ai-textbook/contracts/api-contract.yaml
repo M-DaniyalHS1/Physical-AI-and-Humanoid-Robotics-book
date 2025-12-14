@@ -1,0 +1,498 @@
+# OpenAPI Contract: Physical AI & Humanoid Robotics Textbook API
+
+openapi: 3.0.1
+info:
+  title: Physical AI & Humanoid Robotics Textbook API
+  description: API for the Physical AI & Humanoid Robotics textbook platform
+  version: 1.0.0
+  contact:
+    name: Panaversity Development Team
+    email: info@panaversity.org
+
+servers:
+  - url: https://api.physical-ai-textbook.panaversity.org
+    description: Production server
+  - url: https://staging-api.physical-ai-textbook.panaversity.org
+    description: Staging server
+
+paths:
+  /api/v1/auth/register:
+    post:
+      summary: Register a new user
+      description: Creates a new user account with background information
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - software_background
+                - hardware_background
+                - math_physics_level
+                - learning_goals
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                password:
+                  type: string
+                  format: password
+                  description: User's password
+                software_background:
+                  type: string
+                  enum: [beginner, intermediate, advanced]
+                  description: User's software background level
+                hardware_background:
+                  type: string
+                  enum: [beginner, intermediate, advanced]
+                  description: User's hardware/robotics experience
+                math_physics_level:
+                  type: string
+                  enum: [beginner, intermediate, advanced]
+                  description: User's math and physics proficiency
+                learning_goals:
+                  type: string
+                  description: User's learning objectives
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The user's unique identifier
+                  email:
+                    type: string
+                    description: The user's email address
+                  message:
+                    type: string
+                    description: Success message
+        '400':
+          description: Invalid input data
+        '409':
+          description: Email already registered
+
+  /api/v1/auth/login:
+    post:
+      summary: Authenticate a user
+      description: Authenticates a user with email and password
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                password:
+                  type: string
+                  format: password
+                  description: User's password
+      responses:
+        '200':
+          description: User authenticated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Authentication token
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid credentials
+        '404':
+          description: User not found
+
+  /api/v1/content:
+    get:
+      summary: Get all textbook content
+      description: Retrieves all textbook modules and chapters
+      tags:
+        - Content
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of all content modules and chapters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookContent'
+        '401':
+          description: Unauthorized
+
+  /api/v1/content/{module_id}/{chapter_number}:
+    get:
+      summary: Get specific chapter content
+      description: Retrieves content for a specific chapter
+      tags:
+        - Content
+      parameters:
+        - name: module_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the module
+        - name: chapter_number
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Number of the chapter in the module
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Chapter content retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookContent'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Chapter not found
+
+  /api/v1/content/{content_id}/personalize:
+    put:
+      summary: Update personalization for a chapter
+      description: Adjusts content based on user preferences
+      tags:
+        - Personalization
+      parameters:
+        - name: content_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the content to personalize
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content_depth:
+                  type: string
+                  enum: [shallow, medium, deep]
+                example_preference:
+                  type: string
+                  enum: [theoretical, practical, hardware-focused]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Content personalized successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookContent'
+        '401':
+          description: Unauthorized
+
+  /api/v1/translation/{content_id}:
+    get:
+      summary: Get translated content
+      description: Retrieves content in the requested language
+      tags:
+        - Translation
+      parameters:
+        - name: content_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the content to translate
+        - name: target_language
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [ur, en]
+          description: Target language for translation
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Translated content retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  original_content:
+                    type: string
+                    description: Original content in English
+                  translated_content:
+                    type: string
+                    description: Translated content
+                  source_language:
+                    type: string
+                    description: Source language (en)
+                  target_language:
+                    type: string
+                    description: Target language (ur)
+        '401':
+          description: Unauthorized
+        '404':
+          description: Content not found
+
+  /api/v1/chatbot/query:
+    post:
+      summary: Ask a question to the AI chatbot
+      description: Sends a query to the AI chatbot and gets a response
+      tags:
+        - Chatbot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+                - content_id
+              properties:
+                query:
+                  type: string
+                  description: The user's question
+                content_id:
+                  type: string
+                  description: ID of the content for context
+                selected_text:
+                  type: string
+                  description: Text selected by user (for selected-text-only mode)
+                mode:
+                  type: string
+                  enum: [full_context, selected_text_only]
+                  default: full_context
+                  description: The query mode
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Chatbot response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+                    description: The AI's response to the query
+                  sources:
+                    type: array
+                    items:
+                      type: string
+                    description: List of source sections referenced
+                  confidence:
+                    type: number
+                    format: float
+                    minimum: 0
+                    maximum: 1
+                    description: Confidence level of the response
+        '400':
+          description: Invalid query
+        '401':
+          description: Unauthorized
+
+  /api/v1/user/progress:
+    get:
+      summary: Get user progress
+      description: Retrieves the user's progress across all chapters
+      tags:
+        - Progress
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User progress retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_completed:
+                    type: integer
+                    description: Number of chapters completed
+                  overall_progress:
+                    type: number
+                    format: float
+                    minimum: 0
+                    maximum: 1
+                    description: Overall progress percentage
+                  modules_progress:
+                    type: object
+                    description: Progress per module
+                  recent_activity:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserProgress'
+        '401':
+          description: Unauthorized
+
+  /api/v1/user/progress/{content_id}:
+    put:
+      summary: Update user progress for specific content
+      description: Updates the user's progress for a specific content item
+      tags:
+        - Progress
+      parameters:
+        - name: content_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the content to update progress for
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [not_started, in_progress, completed]
+                progress_percentage:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Progress updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProgress'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Content not found
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the user
+        email:
+          type: string
+          format: email
+          description: User's email address
+        software_background:
+          type: string
+          enum: [beginner, intermediate, advanced]
+          description: User's software background level
+        hardware_background:
+          type: string
+          enum: [beginner, intermediate, advanced]
+          description: User's hardware/robotics experience
+        math_physics_level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+          description: User's math and physics proficiency
+        learning_goals:
+          type: string
+          description: User's learning objectives
+
+    BookContent:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the content
+        module_id:
+          type: string
+          description: Associated module identifier
+        chapter_number:
+          type: integer
+          description: Sequential chapter number within module
+        title:
+          type: string
+          description: Chapter title
+        content:
+          type: string
+          description: Main content in markdown format
+        learning_objectives:
+          type: array
+          items:
+            type: string
+          description: List of learning objectives
+        diagrams:
+          type: array
+          items:
+            type: string
+          description: List of diagram/image references
+        ai_qa_hooks:
+          type: array
+          items:
+            type: object
+            properties:
+              question:
+                type: string
+              answer:
+                type: string
+          description: Embedded questions and answers for AI
+
+    UserProgress:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the progress record
+        content_id:
+          type: string
+          description: Reference to BookContent
+        status:
+          type: string
+          enum: [not_started, in_progress, completed]
+          description: Current status
+        progress_percentage:
+          type: integer
+          description: Percentage of content consumed
+        time_spent_seconds:
+          type: integer
+          description: Time spent on this content
+        last_accessed_at:
+          type: string
+          format: date-time
+          description: Timestamp of last access
+        completed_at:
+          type: string
+          format: date-time
+          description: Timestamp when marked as completed
