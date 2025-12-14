@@ -1,28 +1,62 @@
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, Boolean, Float
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 import os
 from dotenv import load_dotenv
+import uuid
 
 load_dotenv()
 
-# Database URL from environment variable
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://username:password@localhost/dbname")
+# Import database URL - this will be different in tests
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
 
-# Create engine
-engine = create_engine(DATABASE_URL)
+# Create engine - for PostgreSQL use UUID, for SQLite use String
+def create_db_engine(database_url=None):
+    url = database_url or DATABASE_URL
+    if url.startswith("postgresql"):
+        from sqlalchemy.dialects.postgresql import UUID
+        return create_engine(url)
+    else:
+        # For SQLite, we'll use String for IDs
+        return create_engine(url, connect_args={"check_same_thread": False})
 
-# Create session
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Create engine only when needed
+def get_engine():
+    if not hasattr(get_engine, '_engine'):
+        get_engine._engine = create_db_engine()
+    return get_engine._engine
+
+# Create session (engine will be initialized when needed)
+def get_SessionLocal():
+    if not hasattr(get_SessionLocal, '_SessionLocal'):
+        engine = get_engine()
+        get_SessionLocal._SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    return get_SessionLocal._SessionLocal
+
+SessionLocal = get_SessionLocal()
 
 # Base class for models
 Base = declarative_base()
 
+# Check if using PostgreSQL 
+def get_id_column_type(database_url=None):
+    url = database_url or DATABASE_URL
+    if url.startswith("postgresql"):
+        from sqlalchemy.dialects.postgresql import UUID
+        return UUID(as_uuid=True), uuid.uuid4
+    else:
+        # For SQLite, use String
+        return String, str(uuid.uuid4())
+
+id_type, default_id = get_id_column_type()
+
 class User(Base):
     __tablename__ = "users"
+    __table_args__ = {'extend_existing': True}
 
-    id = Column(String, primary_key=True, index=True)
+    id = Column(id_type, primary_key=True, default=default_id)
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
     software_experience = Column(String, nullable=False)  # beginner/intermediate/advanced
@@ -36,6 +70,7 @@ class User(Base):
 
 class BookContent(Base):
     __tablename__ = "book_content"
+    __table_args__ = {'extend_existing': True}
 
     id = Column(String, primary_key=True, index=True)
     title = Column(String, nullable=False)
@@ -52,6 +87,7 @@ class BookContent(Base):
 
 class ChatSession(Base):
     __tablename__ = "chat_sessions"
+    __table_args__ = {'extend_existing': True}
 
     id = Column(String, primary_key=True, index=True)
     user_id = Column(String, nullable=False)  # Foreign key reference
@@ -63,6 +99,7 @@ class ChatSession(Base):
 
 class ChatMessage(Base):
     __tablename__ = "chat_messages"
+    __table_args__ = {'extend_existing': True}
 
     id = Column(String, primary_key=True, index=True)
     session_id = Column(String, nullable=False)  # Foreign key reference
@@ -73,6 +110,7 @@ class ChatMessage(Base):
 
 class PersonalizationProfile(Base):
     __tablename__ = "personalization_profiles"
+    __table_args__ = {'extend_existing': True}
 
     id = Column(String, primary_key=True, index=True)
     user_id = Column(String, nullable=False)  # Foreign key reference
@@ -85,6 +123,7 @@ class PersonalizationProfile(Base):
 
 class TranslationCache(Base):
     __tablename__ = "translation_cache"
+    __table_args__ = {'extend_existing': True}
 
     id = Column(String, primary_key=True, index=True)
     content_id = Column(String, nullable=False)  # Foreign key reference
@@ -97,6 +136,7 @@ class TranslationCache(Base):
 
 class Progress(Base):
     __tablename__ = "progress"
+    __table_args__ = {'extend_existing': True}
 
     id = Column(String, primary_key=True, index=True)
     user_id = Column(String, nullable=False)  # Foreign key reference
@@ -111,6 +151,7 @@ class Progress(Base):
 
 class ContentMetadata(Base):
     __tablename__ = "content_metadata"
+    __table_args__ = {'extend_existing': True}
 
     id = Column(String, primary_key=True, index=True)
     content_id = Column(String, nullable=False)  # Foreign key reference

@@ -64,7 +64,7 @@ description: "Task list for AI-Powered Physical AI & Humanoid Robotics Textbook"
 Examples of foundational tasks (adjust based on your project):
 
 - [X] T006 Setup database schema and migrations framework for Neon Postgres
-- [ ] T007 [P] Implement authentication framework using Better Auth
+- [X] T007 [P] Implement authentication framework using Better Auth
 - [ ] T008 [P] Setup API routing and middleware structure in FastAPI
 - [ ] T009 Create base models/entities that all stories depend on
 - [ ] T010 Configure error handling and logging infrastructure
