@@ -15,6 +15,16 @@ from .core.logging_config import setup_logging, get_logger
 setup_logging()
 logger = get_logger(__name__)
 
+# Validate environment configuration
+from .core.environment import validate_environment, print_environment_summary
+if not validate_environment():
+    logger.error("Environment validation failed. Please check your configuration.")
+    print_environment_summary()  # Print summary for immediate feedback
+    sys.exit(1)
+else:
+    logger.info("Environment validation passed.")
+    print_environment_summary()
+
 # Import all models to register them with SQLAlchemy
 from .models import user, book_content, chat_session, chat_message, personalization_profile, translation_cache, progress, content_metadata
 

@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: ai_textbook_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://admin:password@db:5432/ai_textbook
+      - JWT_SECRET_KEY=dev-secret-key-change-in-production
+      - QDRANT_URL=http://qdrant:6333
+      - REDIS_URL=redis://redis:6379
+      - ENVIRONMENT=development
+    depends_on:
+      - db
+      - qdrant
+      - redis
+    volumes:
+      - ./logs:/app/logs
+
+  db:
+    image: postgres:15
+    container_name: ai_textbook_db
+    environment:
+      - POSTGRES_DB=ai_textbook
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  qdrant:
+    image: qdrant/qdrant
+    container_name: ai_textbook_qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  redis:
+    image: redis:7-alpine
+    container_name: ai_textbook_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  qdrant_data:
+  redis_data:
