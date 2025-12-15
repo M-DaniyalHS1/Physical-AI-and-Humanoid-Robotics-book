@@ -5,15 +5,18 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from .core.config import settings
 import os
 import sys
-import logging
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# Configure comprehensive logging
+from .core.logging_config import setup_logging, get_logger
+setup_logging()
+logger = get_logger(__name__)
+
+# Import all models to register them with SQLAlchemy
+from .models import user, book_content, chat_session, chat_message, personalization_profile, translation_cache, progress, content_metadata
 
 # Import middleware
 from .core.middleware.rate_limit import RateLimitMiddleware

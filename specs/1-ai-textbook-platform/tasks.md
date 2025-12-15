@@ -65,9 +65,9 @@ Examples of foundational tasks (adjust based on your project):
 
 - [X] T006 Setup database schema and migrations framework for Neon Postgres
 - [X] T007 [P] Implement authentication framework using Better Auth
-- [ ] T008 [P] Setup API routing and middleware structure in FastAPI
-- [ ] T009 Create base models/entities that all stories depend on
-- [ ] T010 Configure error handling and logging infrastructure
+- [X] T008 [P] Setup API routing and middleware structure in FastAPI
+- [X] T009 Create base models/entities that all stories depend on
+- [X] T010 Configure error handling and logging infrastructure
 - [ ] T011 Setup environment configuration management
 - [ ] T012 Configure Qdrant vector store integration
 - [ ] T013 Set up rate limiting middleware (10 req/min for chat, 50 for translation, 100 for content)
