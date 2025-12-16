@@ -94,8 +94,8 @@ Examples of foundational tasks (adjust based on your project):
 ### Implementation for User Story 1
 
 - [X] T018 [P] [US1] Create BookContent model in backend/src/models/book_content.py
-- [ ] T019 [P] [US1] Create ContentMetadata model in backend/src/models/content_metadata.py
-- [ ] T020 [P] [US1] Create Progress model in backend/src/models/progress.py
+- [X] T019 [P] [US1] Create ContentMetadata model in backend/src/models/content_metadata.py
+- [X] T020 [P] [US1] Create Progress model in backend/src/models/progress.py
 - [ ] T021 [US1] Implement ContentService in backend/src/services/content_service.py
 - [ ] T022 [US1] Implement ContentAPI in backend/src/api/content.py with /content and /content/{id} endpoints
 - [ ] T023 [US1] Add validation and error handling for content retrieval
