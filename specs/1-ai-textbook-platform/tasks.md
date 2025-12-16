@@ -88,12 +88,12 @@ Examples of foundational tasks (adjust based on your project):
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
 - [X] T015 [P] [US1] Contract test for /content endpoint in backend/tests/contract/test_content.py
-- [ ] T016 [P] [US1] Contract test for /content/{id} endpoint in backend/tests/contract/test_content.py
-- [ ] T017 [P] [US1] Integration test for content retrieval in backend/tests/integration/test_content.py
+- [X] T016 [P] [US1] Contract test for /content/{id} endpoint in backend/tests/contract/test_content.py
+- [X] T017 [P] [US1] Integration test for content retrieval in backend/tests/integration/test_content.py
 
 ### Implementation for User Story 1
 
-- [ ] T018 [P] [US1] Create BookContent model in backend/src/models/book_content.py
+- [X] T018 [P] [US1] Create BookContent model in backend/src/models/book_content.py
 - [ ] T019 [P] [US1] Create ContentMetadata model in backend/src/models/content_metadata.py
 - [ ] T020 [P] [US1] Create Progress model in backend/src/models/progress.py
 - [ ] T021 [US1] Implement ContentService in backend/src/services/content_service.py
