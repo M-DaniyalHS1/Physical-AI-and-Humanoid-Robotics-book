@@ -97,11 +97,11 @@ Examples of foundational tasks (adjust based on your project):
 - [X] T019 [P] [US1] Create ContentMetadata model in backend/src/models/content_metadata.py
 - [X] T020 [P] [US1] Create Progress model in backend/src/models/progress.py
 - [X] T021 [US1] Implement ContentService in backend/src/services/content_service.py
-- [ ] T022 [US1] Implement ContentAPI in backend/src/api/content.py with /content and /content/{id} endpoints
-- [ ] T023 [US1] Add validation and error handling for content retrieval
-- [ ] T024 [US1] Create Docusaurus configuration for textbook modules in docs/docusaurus.config.js
-- [ ] T025 [US1] Create Docusaurus pages for 4 modules (ROS 2, Gazebo & Unity, NVIDIA Isaac, VLA) in docs/
-- [ ] T026 [US1] Implement content loading functionality in frontend/src/services/content.js
+- [X] T022 [US1] Implement ContentAPI in backend/src/api/content.py with /content and /content/{id} endpoints
+- [X] T023 [US1] Add validation and error handling for content retrieval
+- [X] T024 [US1] Create Docusaurus configuration for textbook modules in docs/docusaurus.config.js
+- [X] T025 [US1] Create Docusaurus pages for 4 modules (ROS 2, Gazebo & Unity, NVIDIA Isaac, VLA) in docs/
+- [X] T026 [US1] Implement content loading functionality in frontend/src/services/content.js
 - [ ] T027 [US1] Create content display components in frontend/src/components/ContentDisplay.js
 - [ ] T028 [US1] Implement progress tracking API integration in frontend/src/services/progress.js
 
