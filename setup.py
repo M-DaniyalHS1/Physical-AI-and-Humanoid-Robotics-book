@@ -9,7 +9,7 @@ setup(
         "fastapi==0.104.1",
         "uvicorn[standard]==0.24.0",
         "openai==1.3.8",
-        "better-auth==0.0.1",
+        "better-auth==0.0.1b11",
         "qdrant-client==1.8.0",
         "asyncpg==0.29.0",
         "sqlalchemy==2.0.23",
