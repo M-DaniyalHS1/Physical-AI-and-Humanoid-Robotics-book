@@ -20,5 +20,6 @@ setup(
         "httpx==0.25.2",
         "passlib[bcrypt]==1.7.4",
         "pyjwt==2.8.0",
+        "gunicorn==21.2.0",
     ],
 )
