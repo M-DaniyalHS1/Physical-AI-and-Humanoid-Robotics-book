@@ -1,0 +1,10 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "../Dockerfile"  # Path to the Dockerfile in the root
+
+[deploy]
+numReplicas = 1
+healthcheckPath = "/docs"  # Health check path for your FastAPI app
+healthcheckTimeout = 120   # Timeout in seconds
+restartPolicyType = "always"
+startCommand = "gunicorn --worker-class uvicorn.workers.UvicornWorker --workers 2 --bind 0.0.0.0:8000 --timeout 120 --keep-alive 5 src.main:app"
