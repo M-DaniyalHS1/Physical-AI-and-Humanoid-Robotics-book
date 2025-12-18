@@ -24,7 +24,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/src/ ./src/
 COPY backend/alembic/ ./alembic/
 COPY backend/alembic.ini ./
-COPY backend/setup.py ./
 
 # Create a non-root user
 RUN adduser --disabled-password --gecos '' appuser
