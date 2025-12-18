@@ -4,6 +4,6 @@ dockerfilePath = "../Dockerfile"  # Path to the Dockerfile in the root
 
 [deploy]
 numReplicas = 1
-healthcheckPath = "/docs"  # Health check path for your FastAPI app
+healthcheckPath = "/health"  # Use health check endpoint from main.py
 healthcheckTimeout = 120   # Timeout in seconds
 restartPolicyType = "always"
