@@ -37,4 +37,5 @@ EXPOSE 8000
 ENV PYTHONPATH=/app
 
 # Run the application
-CMD ["gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", "--workers", "2", "--bind", "0.0.0.0:8000", "--timeout", "120", "--keep-alive", "5", "src.main:app"]
+# Use the PORT environment variable provided by Railway, defaulting to 8000 if not set
+CMD ["sh", "-c", "gunicorn --worker-class uvicorn.workers.UvicornWorker --workers 2 --bind 0.0.0.0:${PORT:-8000} --timeout 120 --keep-alive 5 src.main:app"]
