@@ -33,5 +33,8 @@ USER appuser
 # Expose port
 EXPOSE 8000
 
+# Set PYTHONPATH to ensure modules can be found
+ENV PYTHONPATH=/app
+
 # Run the application
-CMD ["gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", "--workers", "4", "--bind", "0.0.0.0:8000", "src.main:app"]
+CMD ["gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", "--workers", "2", "--bind", "0.0.0.0:8000", "--timeout", "120", "--keep-alive", "5", "src.main:app"]
