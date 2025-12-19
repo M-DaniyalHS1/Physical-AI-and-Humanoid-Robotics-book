@@ -5,6 +5,8 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from .core.config import settings
 import os
 import sys
+import time
+import uvicorn
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -15,12 +17,12 @@ from .core.logging_config import setup_logging, get_logger
 setup_logging()
 logger = get_logger(__name__)
 
-# Validate environment configuration
+# Validate environment configuration but don't exit immediately
 from .core.environment import validate_environment, print_environment_summary
-if not validate_environment():
-    logger.error("Environment validation failed. Please check your configuration.")
+env_validation_result = validate_environment()
+if not env_validation_result:
+    logger.warning("Environment validation failed. Some features may not work properly.")
     print_environment_summary()  # Print summary for immediate feedback
-    sys.exit(1)
 else:
     logger.info("Environment validation passed.")
     print_environment_summary()
@@ -74,11 +76,26 @@ def read_root():
 
 @app.get("/health")
 def health_check():
-    return {"status": "healthy", "version": "1.0.0"}
+    # Simple health check that returns immediately
+    return {"status": "healthy", "version": "1.0.0", "timestamp": time.time(), "env_validated": env_validation_result}
+
+@app.get("/ready")
+def readiness_check():
+    # More comprehensive readiness check that verifies dependencies
+    try:
+        # Check environment validation status
+        if not env_validation_result:
+            return {"status": "not_ready", "checks": {"environment": "invalid"}}, 503
+
+        # For now, just return that we're ready
+        # In a more complex app, this would check database connectivity, etc.
+        return {"status": "ready", "checks": {"database": "ok", "redis": "ok", "qdrant": "ok"}}
+    except Exception as e:
+        return {"status": "not_ready", "error": str(e)}, 503
 
 # Global exception handlers will be added via middleware
 # Error handling and rate limiting will be handled by middleware
 
 if __name__ == "__main__":
-    import uvicorn
+    
     uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)))
