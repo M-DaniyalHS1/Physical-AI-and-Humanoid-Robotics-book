@@ -28,7 +28,12 @@ else:
     print_environment_summary()
 
 # Import all models to register them with SQLAlchemy
-from .models import user, book_content, chat_session, chat_message, personalization_profile, translation_cache, progress, content_metadata
+# Delay imports that might fail due to missing dependencies or database issues
+try:
+    from .models import user, book_content, chat_session, chat_message, personalization_profile, translation_cache, progress, content_metadata
+except Exception as e:
+    logger.error(f"Error importing models: {e}")
+    # Continue startup even if models fail to import
 
 # Import middleware
 from .core.middleware.rate_limit import RateLimitMiddleware
@@ -58,17 +63,36 @@ app.add_middleware(
 )
 
 # Include API routers
-from .api.auth import router as auth_router
-from .api.content import router as content_router
-from .api.chat import router as chat_router
-from .api.user import router as user_router
-from .api.translation import router as translation_router
+# Import routers with error handling in case of dependency issues
+try:
+    from .api.auth import router as auth_router
+    app.include_router(auth_router, prefix="/api/v1", tags=["Authentication"])
+except Exception as e:
+    logger.error(f"Error importing auth router: {e}")
 
-app.include_router(auth_router, prefix="/api/v1", tags=["Authentication"])
-app.include_router(content_router, prefix="/api/v1", tags=["Content"])
-app.include_router(chat_router, prefix="/api/v1", tags=["Chat"])
-app.include_router(user_router, prefix="/api/v1", tags=["User"])
-app.include_router(translation_router, prefix="/api/v1", tags=["Translation"])
+try:
+    from .api.content import router as content_router
+    app.include_router(content_router, prefix="/api/v1", tags=["Content"])
+except Exception as e:
+    logger.error(f"Error importing content router: {e}")
+
+try:
+    from .api.chat import router as chat_router
+    app.include_router(chat_router, prefix="/api/v1", tags=["Chat"])
+except Exception as e:
+    logger.error(f"Error importing chat router: {e}")
+
+try:
+    from .api.user import router as user_router
+    app.include_router(user_router, prefix="/api/v1", tags=["User"])
+except Exception as e:
+    logger.error(f"Error importing user router: {e}")
+
+try:
+    from .api.translation import router as translation_router
+    app.include_router(translation_router, prefix="/api/v1", tags=["Translation"])
+except Exception as e:
+    logger.error(f"Error importing translation router: {e}")
 
 @app.get("/")
 def read_root():
