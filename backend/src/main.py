@@ -50,7 +50,8 @@ app = FastAPI(
 )
 
 # Add custom middleware
-app.add_middleware(RateLimitMiddleware)
+# Temporarily disable rate limiting middleware to see if it's causing timeout issues
+# app.add_middleware(RateLimitMiddleware)
 app.middleware("http")(error_handler_middleware)
 
 # Add CORS middleware
