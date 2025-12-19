@@ -18,14 +18,19 @@ setup_logging()
 logger = get_logger(__name__)
 
 # Validate environment configuration but don't exit immediately
-from .core.environment import validate_environment, print_environment_summary
-env_validation_result = validate_environment()
-if not env_validation_result:
-    logger.warning("Environment validation failed. Some features may not work properly.")
-    print_environment_summary()  # Print summary for immediate feedback
-else:
-    logger.info("Environment validation passed.")
-    print_environment_summary()
+try:
+    from .core.environment import validate_environment, print_environment_summary
+    env_validation_result = validate_environment()
+    if not env_validation_result:
+        logger.warning("Environment validation failed. Some features may not work properly.")
+        print_environment_summary()  # Print summary for immediate feedback
+    else:
+        logger.info("Environment validation passed.")
+        print_environment_summary()
+except Exception as e:
+    logger.error(f"Environment validation failed with exception: {e}")
+    env_validation_result = False
+    print_environment_summary() if 'print_environment_summary' in locals() else print("Environment validation could not be completed")
 
 # Import all models to register them with SQLAlchemy
 # Delay imports that might fail due to missing dependencies or database issues
