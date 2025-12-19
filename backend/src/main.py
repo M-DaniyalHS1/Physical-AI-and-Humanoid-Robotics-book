@@ -39,6 +39,9 @@ except Exception as e:
 from .core.middleware.rate_limit import RateLimitMiddleware
 from .core.middleware.error_handler import error_handler_middleware
 
+# Print a startup message to help with debugging
+print("Application module loaded successfully")
+
 # Create FastAPI app with metadata
 app = FastAPI(
     title="AI-Powered Physical AI & Humanoid Robotics Textbook API",
@@ -52,7 +55,8 @@ app = FastAPI(
 # Add custom middleware
 # Temporarily disable rate limiting middleware to see if it's causing timeout issues
 # app.add_middleware(RateLimitMiddleware)
-# app.middleware("http")(error_handler_middleware)  # Also disable error handler middleware if causing issues
+# Temporarily disable error handler middleware if causing issues
+# app.middleware("http")(error_handler_middleware)
 
 # Add CORS middleware
 app.add_middleware(
@@ -136,4 +140,5 @@ def readiness_check():
 if __name__ == "__main__":
     # Use the PORT environment variable provided by Railway or default to 8000
     port = int(os.getenv("PORT", 8000))
+    print(f"Starting server on port {port}")
     uvicorn.run(app, host="0.0.0.0", port=port)
