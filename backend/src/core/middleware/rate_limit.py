@@ -44,11 +44,11 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         # - content_rate_limit: 100 requests/minute
 
         if "/chat" in path:
-            max_requests, window_seconds = self.parse_rate_limit(settings.chat_rate_limit)
+            max_requests, window_seconds = RateLimitMiddleware.parse_rate_limit(settings.chat_rate_limit)
         elif "/translate" in path:
-            max_requests, window_seconds = self.parse_rate_limit(settings.translation_rate_limit)
+            max_requests, window_seconds = RateLimitMiddleware.parse_rate_limit(settings.translation_rate_limit)
         elif "/content" in path:
-            max_requests, window_seconds = self.parse_rate_limit(settings.content_rate_limit)
+            max_requests, window_seconds = RateLimitMiddleware.parse_rate_limit(settings.content_rate_limit)
         else:
             # Default rate limit for other endpoints
             max_requests, window_seconds = 100, 60  # 100 requests per minute
