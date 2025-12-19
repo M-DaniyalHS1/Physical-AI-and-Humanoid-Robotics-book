@@ -96,7 +96,19 @@ except Exception as e:
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the AI-Powered Physical AI & Humanoid Robotics Textbook API"}
+    """
+    Root endpoint that returns a simple response to verify the application is running.
+    This is important for health checks and basic connectivity verification.
+    """
+    return {
+        "message": "AI-Powered Physical AI & Humanoid Robotics Textbook API is running",
+        "status": "healthy",
+        "endpoints": {
+            "health": "/health",
+            "docs": "/api/docs",
+            "redoc": "/api/redoc"
+        }
+    }
 
 @app.get("/health")
 def health_check():
