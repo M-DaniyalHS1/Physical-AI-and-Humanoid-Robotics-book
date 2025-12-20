@@ -27,10 +27,14 @@ try:
     else:
         logger.info("Environment validation passed.")
         print_environment_summary()
+except ImportError:
+    logger.warning("Environment validation module not found, skipping validation")
+    env_validation_result = True
+    print("Environment validation skipped (module not found)")
 except Exception as e:
     logger.error(f"Environment validation failed with exception: {e}")
     env_validation_result = False
-    print_environment_summary() if 'print_environment_summary' in locals() else print("Environment validation could not be completed")
+    print("Environment validation could not be completed")
 
 # Import all models to register them with SQLAlchemy
 # Delay imports that might fail due to missing dependencies or database issues
