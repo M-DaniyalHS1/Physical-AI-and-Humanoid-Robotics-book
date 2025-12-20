@@ -14,7 +14,7 @@ This project is configured to deploy to GitHub Pages using GitHub Actions.
 3. In your GitHub repository:
    - Go to Settings > Pages
    - Under "Source", select "Deploy from a branch"
-   - Select your main branch and `/docs/build` as the folder
+   - Select the gh-pages branch
 
 4. Push your changes to the main branch to trigger the deployment
 
