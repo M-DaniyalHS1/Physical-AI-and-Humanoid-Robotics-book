@@ -36,12 +36,27 @@ class ContentMetadata(Base):
 
     def to_dict(self):
         """Convert the model instance to a dictionary representation"""
+        # Safely parse JSON fields, returning empty arrays if parsing fails
+        def safe_json_parse(json_str, default=None):
+            if default is None:
+                default = []
+            if not json_str:
+                return default
+            try:
+                return json.loads(json_str)
+            except (json.JSONDecodeError, TypeError):
+                # Log the error for debugging but return default to prevent crashes
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f"Failed to parse JSON: {json_str}")
+                return default
+
         return {
             "id": self.id,
             "content_id": self.content_id,
             "personalization_level": self.personalization_level,
             "adjusted_content": self.adjusted_content,
-            "adjusted_examples": json.loads(self.adjusted_examples) if self.adjusted_examples else [],
+            "adjusted_examples": safe_json_parse(self.adjusted_examples),
             "difficulty_rating": self.difficulty_rating,
             "estimated_time_minutes": self.estimated_time_minutes,
             "created_at": self.created_at.isoformat() if self.created_at else None,
