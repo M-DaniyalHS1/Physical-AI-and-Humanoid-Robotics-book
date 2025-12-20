@@ -36,31 +36,10 @@ except Exception as e:
 # Delay imports that might fail due to missing dependencies or database issues
 try:
     from .models import user, book_content, chat_session, chat_message, personalization_profile, translation_cache, progress, content_metadata
-    # Create all database tables
-    from .models.database import Base, get_engine
-    engine = get_engine()
-    Base.metadata.create_all(bind=engine)
-    logger.info("Database tables created successfully")
+    logger.info("Models imported successfully")
 except Exception as e:
-    logger.error(f"Error importing models or creating database tables: {e}")
-    # Continue startup even if models fail to import or tables can't be created
-
-# Initialize database schema using Alembic migrations
-try:
-    from alembic.config import Config
-    from alembic import command
-    from .core.config import settings
-
-    # Set up alembic config
-    alembic_cfg = Config("alembic.ini")
-    alembic_cfg.set_main_option("sqlalchemy.url", settings.database_url)
-
-    # Run migrations to ensure schema is up-to-date
-    command.upgrade(alembic_cfg, "head")
-    logger.info("Database migrations applied successfully")
-except Exception as e:
-    logger.error(f"Error applying database migrations: {e}")
-    # Continue startup even if migrations fail
+    logger.error(f"Error importing models: {e}")
+    # Continue startup even if models fail to import
 
 # Import middleware
 from .core.middleware.rate_limit import RateLimitMiddleware

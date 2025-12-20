@@ -35,6 +35,21 @@ class BookContent(Base):
 
     def to_dict(self):
         """Convert the model instance to a dictionary representation matching the API contract"""
+        # Safely parse JSON fields, returning empty arrays if parsing fails
+        def safe_json_parse(json_str, default=None):
+            if default is None:
+                default = []
+            if not json_str:
+                return default
+            try:
+                return json.loads(json_str)
+            except (json.JSONDecodeError, TypeError):
+                # Log the error for debugging but return default to prevent crashes
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f"Failed to parse JSON: {json_str}")
+                return default
+
         return {
             "id": self.id,
             "title": self.title,
@@ -46,6 +61,6 @@ class BookContent(Base):
             "vector_id": self.vector_id,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
-            "authors": json.loads(self.authors) if self.authors else [],
-            "learning_objectives": json.loads(self.learning_objectives) if self.learning_objectives else []
+            "authors": safe_json_parse(self.authors),
+            "learning_objectives": safe_json_parse(self.learning_objectives)
         }
