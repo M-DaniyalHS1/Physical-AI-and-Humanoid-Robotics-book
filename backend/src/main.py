@@ -18,26 +18,56 @@ setup_logging()
 logger = get_logger(__name__)
 
 # Validate environment configuration but don't exit immediately
-from .core.environment import validate_environment, print_environment_summary
-env_validation_result = validate_environment()
-if not env_validation_result:
-    logger.warning("Environment validation failed. Some features may not work properly.")
-    print_environment_summary()  # Print summary for immediate feedback
-else:
-    logger.info("Environment validation passed.")
-    print_environment_summary()
+try:
+    from .core.environment import validate_environment, print_environment_summary
+    env_validation_result = validate_environment()
+    if not env_validation_result:
+        logger.warning("Environment validation failed. Some features may not work properly.")
+        print_environment_summary()  # Print summary for immediate feedback
+    else:
+        logger.info("Environment validation passed.")
+        print_environment_summary()
+except Exception as e:
+    logger.error(f"Environment validation failed with exception: {e}")
+    env_validation_result = False
+    print_environment_summary() if 'print_environment_summary' in locals() else print("Environment validation could not be completed")
 
 # Import all models to register them with SQLAlchemy
 # Delay imports that might fail due to missing dependencies or database issues
 try:
     from .models import user, book_content, chat_session, chat_message, personalization_profile, translation_cache, progress, content_metadata
+    # Create all database tables
+    from .models.database import Base, get_engine
+    engine = get_engine()
+    Base.metadata.create_all(bind=engine)
+    logger.info("Database tables created successfully")
 except Exception as e:
-    logger.error(f"Error importing models: {e}")
-    # Continue startup even if models fail to import
+    logger.error(f"Error importing models or creating database tables: {e}")
+    # Continue startup even if models fail to import or tables can't be created
+
+# Initialize database schema using Alembic migrations
+try:
+    from alembic.config import Config
+    from alembic import command
+    from .core.config import settings
+
+    # Set up alembic config
+    alembic_cfg = Config("alembic.ini")
+    alembic_cfg.set_main_option("sqlalchemy.url", settings.database_url)
+
+    # Run migrations to ensure schema is up-to-date
+    command.upgrade(alembic_cfg, "head")
+    logger.info("Database migrations applied successfully")
+except Exception as e:
+    logger.error(f"Error applying database migrations: {e}")
+    # Continue startup even if migrations fail
 
 # Import middleware
 from .core.middleware.rate_limit import RateLimitMiddleware
 from .core.middleware.error_handler import error_handler_middleware
+
+# Print a startup message to help with debugging
+print("Application module loaded successfully")
 
 # Create FastAPI app with metadata
 app = FastAPI(
@@ -52,7 +82,8 @@ app = FastAPI(
 # Add custom middleware
 # Temporarily disable rate limiting middleware to see if it's causing timeout issues
 # app.add_middleware(RateLimitMiddleware)
-# app.middleware("http")(error_handler_middleware)  # Also disable error handler middleware if causing issues
+# Temporarily disable error handler middleware if causing issues
+# app.middleware("http")(error_handler_middleware)
 
 # Add CORS middleware
 app.add_middleware(
@@ -136,4 +167,5 @@ def readiness_check():
 if __name__ == "__main__":
     # Use the PORT environment variable provided by Railway or default to 8000
     port = int(os.getenv("PORT", 8000))
+    print(f"Starting server on port {port}")
     uvicorn.run(app, host="0.0.0.0", port=port)

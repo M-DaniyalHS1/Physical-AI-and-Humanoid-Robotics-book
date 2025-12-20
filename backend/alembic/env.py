@@ -64,16 +64,17 @@ async def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
+    # Get database URL from config, with fallback to environment
+    from src.core.config import settings
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
+        url=settings.database_url,  # Override with the application's database URL
     )
 
-    async with connectable.connect() as connection:
-        await connection.run_sync(do_run_migrations)
-
-    await connectable.dispose()
+    with connectable.connect() as connection:
+        do_run_migrations(connection)
 
 
 if context.is_offline_mode():

@@ -16,7 +16,7 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade() -> None
+def upgrade() -> None:
     # Create users table
     op.create_table(
         'users',
@@ -136,7 +136,7 @@ def upgrade() -> None
     )
 
 
-def downgrade() -> None
+def downgrade() -> None:
     op.drop_table('content_metadata')
     op.drop_table('progress')
     op.drop_table('translation_cache')
