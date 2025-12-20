@@ -6,8 +6,8 @@ This project is configured to deploy to GitHub Pages using GitHub Actions.
 
 1. Ensure the workflow file `.github/workflows/gh-pages.yml` is present in your repository
 2. Make sure your `docusaurus.config.js` has the correct:
-   - `url`: Set to your GitHub Pages URL (e.g., `https://panaversity.github.io`)
-   - `baseUrl`: Set to your project name (e.g., `/ai-textbook-platform`)
+   - `url`: Set to your GitHub Pages URL (e.g., `https://m-daniyalhs1.github.io`)
+   - `baseUrl`: Set to your project name (e.g., `/Physical-AI-and-Humanoid-Robotics-book`)
    - `organizationName`: Your GitHub username or organization name
    - `projectName`: Your repository name
 
