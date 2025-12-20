@@ -36,6 +36,10 @@ EXPOSE 8000
 # Set PYTHONPATH to ensure modules can be found
 ENV PYTHONPATH=/app
 
+# Copy the startup script
+COPY backend/start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
 # Run the application
 # Use the PORT environment variable provided by Railway, defaulting to 8000 if not set
-CMD ["sh", "-c", "gunicorn --worker-class uvicorn.workers.UvicornWorker --workers 2 --bind 0.0.0.0:${PORT:-8000} --timeout 120 --keep-alive 5 src.main:app"]
+CMD ["/app/start.sh"]
