@@ -21,13 +21,13 @@
 - [x] Choose and sign up for a backend hosting platform (Railway)
 - [x] Configure platform-specific deployment files (not needed - Dockerfile sufficient)
 - [x] Set up production environment variables in the hosting platform
-- [ ] Deploy backend application
-- [ ] Verify backend health endpoints respond correctly
-- [ ] Test backend API endpoints manually
+- [x] Deploy backend application
+- [x] Verify backend health endpoints respond correctly
+- [x] Test backend API endpoints manually
 
 ## Frontend Deployment
-- [ ] Build frontend for production: `npm run build`
-- [ ] Configure GitHub Pages deployment
+- [x] Build frontend for production: `npm run build`
+- [x] Configure GitHub Pages deployment
 - [ ] Set up GitHub Actions for automated frontend deployment
 - [ ] Update frontend to use production backend API URL
 - [ ] Deploy frontend to GitHub Pages
