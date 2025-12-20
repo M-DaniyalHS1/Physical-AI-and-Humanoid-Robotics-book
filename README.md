@@ -50,6 +50,7 @@ The frontend is configured for deployment to GitHub Pages using GitHub Actions:
 1. Ensure the GitHub Actions workflow file `.github/workflows/gh-pages.yml` exists
 2. The workflow will automatically build and deploy the site when changes are pushed to the main branch
 3. Make sure GitHub Pages is enabled in your repository settings (Settings > Pages > Source: Deploy from a branch > Branch: main, folder: `/docs/build`)
+4. The site will be available at: https://m-daniyalhs1.github.io/Physical-AI-and-Humanoid-Robotics-book/
 
 ## Architecture
 

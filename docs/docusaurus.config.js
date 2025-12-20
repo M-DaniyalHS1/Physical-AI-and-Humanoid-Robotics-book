@@ -12,14 +12,14 @@ const config = {
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://panaversity.github.io',
+  url: 'https://m-daniyalhs1.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/ai-textbook/',
+  baseUrl: '/Physical-AI-and-Humanoid-Robotics-book/',
 
   // GitHub pages deployment config.
-  organizationName: 'Panaversity', // Usually your GitHub org/user name.
-  projectName: 'ai-textbook-platform', // Usually your repo name.
+  organizationName: 'M-DaniyalHS1', // Usually your GitHub org/user name.
+  projectName: 'Physical-AI-and-Humanoid-Robotics-book', // Usually your repo name.
 
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
