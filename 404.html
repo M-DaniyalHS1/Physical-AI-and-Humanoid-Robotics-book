@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Page Not Found | AI & Humanoid Robotics Textbook</title>
+<title>AI & Humanoid Robotics Learning Portal</title>
 
 <style>
-  .custom-404-container {
+  .custom-page-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -27,7 +27,7 @@
     font-size: 1.25rem;
     color: #6c757d;
     margin-bottom: 2rem;
-    max-width: 600px;
+    max-width: 650px;
   }
 
   .robot-icon {
@@ -43,14 +43,11 @@
     100% { transform: translateY(0); }
   }
 
-  /* Respect reduced-motion preferences */
   @media (prefers-reduced-motion: reduce) {
-    .robot-icon {
-      animation: none;
-    }
+    .robot-icon { animation: none; }
   }
 
-  .get-started-btn {
+  .primary-btn {
     display: inline-block;
     background: linear-gradient(135deg, #4f8bf9 0%, #6a5af9 100%);
     color: #fff;
@@ -64,8 +61,8 @@
     text-decoration: none;
   }
 
-  .get-started-btn:hover,
-  .get-started-btn:focus-visible {
+  .primary-btn:hover,
+  .primary-btn:focus-visible {
     transform: translateY(-3px);
     box-shadow: 0 8px 22px rgba(79, 139, 249, 0.6);
     outline: none;
@@ -85,34 +82,35 @@
   .other-links a:hover,
   .other-links a:focus-visible {
     text-decoration: underline;
-    outline: none;
   }
 </style>
 </head>
 
 <body>
-<main role="main" class="custom-404-container" aria-labelledby="not-found-title">
+
+<main class="custom-page-container">
 
   <div class="robot-icon" aria-hidden="true">🤖</div>
 
-  <h1 id="not-found-title" class="hero__title">Page Not Found</h1>
+  <h1 class="hero__title">Welcome to the AI & Robotics Learning Hub</h1>
 
   <p class="subtitle">
-    It seems you've ventured into uncharted territory in our AI & Robotics universe.
-    Don't worry — our navigation system will guide you back to the learning path.
+    Explore concepts in Physical AI, Humanoid Robotics, and intelligent systems — with an interactive,
+    hands-on learning experience designed for students, developers, and researchers.
   </p>
 
   <a href="/Physical-AI-and-Humanoid-Robotics-book/docs/intro"
-     class="get-started-btn"
+     class="primary-btn"
      role="button">
-     Get Started with Textbook
+     Start Learning
   </a>
 
   <div class="other-links">
-    <a href="/Physical-AI-and-Humanoid-Robotics-book/">Go to Homepage</a>
+    <a href="/Physical-AI-and-Humanoid-Robotics-book/">Home</a>
     <a href="javascript:history.back()">Go Back</a>
   </div>
 
 </main>
+
 </body>
 </html>
