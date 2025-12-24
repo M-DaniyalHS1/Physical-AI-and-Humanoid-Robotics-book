@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main] # Change to your default branch if different
+    branches: [main, chore/update-database-config-and-tasks] # Added our branch to trigger the workflow
   pull_request:
     branches: [main]
 
