@@ -6,22 +6,21 @@
 <title>AI & Robotics Learning Hub</title>
 
 <style>
-/* ===== Global Style ===== */
 body {
   margin: 0;
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   background: radial-gradient(120% 140% at 10% -10%, #151d3b, #05070f 60%);
   color: #e4e8ff;
+  overflow-x: hidden;
 }
 
-/* ===== Floating Color Shapes ===== */
+/* Soft floating color blobs */
 .shape {
   position: absolute;
   filter: blur(40px);
   opacity: .45;
   z-index: -1;
 }
-
 .shape.pink { background:#ff6ec7; width:360px; height:360px; top:10%; left:-6%; border-radius:40% 55% 50% 65%; }
 .shape.blue { background:#4f8bf9; width:300px; height:300px; bottom:10%; right:5%; border-radius:60% 40% 55% 45%; }
 .shape.teal { background:#3fe3c6; width:260px; height:260px; top:40%; right:28%; border-radius:50% 60% 40% 70%; }
@@ -40,12 +39,11 @@ body {
   min-height: 92vh;
   padding: clamp(1.5rem, 3.5vw, 4rem);
 }
-
 @media (max-width: 880px) {
-  .hero { grid-template-columns: 1fr; gap: 2.25rem; text-align: center; }
+  .hero { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
 }
 
-/* ===== Left Block ===== */
+/* ===== Text Block ===== */
 .tagline {
   display: inline-block;
   padding: .45rem .8rem;
@@ -56,20 +54,17 @@ body {
   letter-spacing:.1em;
   margin-bottom: .8rem;
 }
-
 .hero-title {
   font-size: clamp(2.4rem, 4.4vw, 4.2rem);
   line-height: 1.05;
   font-weight: 900;
   margin: .35rem 0 1rem;
 }
-
 .hero-title span {
   background: linear-gradient(120deg,#7ed2ff,#7a7bff,#c78bff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-
 .subtext {
   max-width: 600px;
   color: #b8c2ff;
@@ -77,16 +72,8 @@ body {
   line-height: 1.6;
   margin-bottom: 2rem;
 }
-
-.cta-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-@media (max-width: 880px) {
-  .cta-row { justify-content: center; }
-}
+.cta-row { display: flex; flex-wrap: wrap; gap: 1rem; }
+@media (max-width: 880px) { .cta-row { justify-content: center; } }
 
 /* ===== Buttons ===== */
 .btn-primary {
@@ -112,80 +99,64 @@ body {
 }
 .btn-outline:hover { background: rgba(255,255,255,.12); }
 
-/* ===== Right — Reactive Visual Card ===== */
-.visual-wrapper {
+/* ===== ROBOT INTERACTION AREA ===== */
+.robot-wrapper {
   display:flex;
   justify-content:center;
   align-items:center;
+  perspective: 900px;
 }
 
-/* base card */
-.card-tilt {
-  background: radial-gradient(120% 120% at 10% 10%, #0c1433, #0b0f24 60%);
-  border-radius: 26px;
-  padding: 2.2rem;
-  width: min(420px, 95%);
-  box-shadow: 0 28px 60px rgba(0,0,0,.55),
-              inset 0 0 0 1px rgba(255,255,255,.06);
-  transform: rotate(-2deg);
+/* floating robot card */
+.robot {
+  width: 320px;
+  height: 320px;
+  border-radius: 28px;
+  background: radial-gradient(120% 120% at 20% 10%, #0c1433, #070a16 70%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  box-shadow: 0 26px 60px rgba(0,0,0,.55),
+              inset 0 0 0 1px rgba(255,255,255,.08);
+  transition: transform .2s ease-out;
   position: relative;
 }
 
-/* glowing border blur */
-.card-tilt::after {
+/* glow border */
+.robot::after {
   content:"";
   position:absolute;
-  inset: -1px;
-  border-radius: inherit;
-  background: linear-gradient(145deg,#4f8bf9,#7ed2ff,#c78bff);
-  opacity:.25;
-  z-index:-1;
-  filter: blur(18px);
-}
-
-/* ==== REACTIVE UPGRADE ==== */
-.reactive-card {
-  transform-style: preserve-3d;
-  transition: transform .35s ease, box-shadow .35s ease;
-  cursor: pointer;
-}
-
-.reactive-card:hover {
-  box-shadow: 0 42px 90px rgba(0,0,0,.65),
-              inset 0 0 0 1px rgba(255,255,255,.18);
-}
-
-/* moving glow hotspot */
-.reactive-card .glow {
-  position:absolute;
-  inset:0;
+  inset:-1px;
   border-radius:inherit;
-  pointer-events:none;
-  background: radial-gradient(
-    220px 140px at var(--gx,50%) var(--gy,50%),
-    rgba(140,200,255,.35),
-    transparent 60%
-  );
-  opacity:.55;
-  transition: opacity .25s ease;
-}
-.reactive-card:not(:hover) .glow { opacity:.18; }
-
-/* accessibility fallback */
-@media (prefers-reduced-motion: reduce), (max-width: 880px) {
-  .reactive-card { transform:none !important; }
+  background: linear-gradient(145deg,#4f8bf9,#7ed2ff,#c78bff);
+  opacity:.35;
+  filter: blur(18px);
+  z-index:-1;
 }
 
-/* content */
-.brain-icon { font-size: 4.5rem; margin-bottom: 1rem; }
-.card-title { font-size: 1.6rem; font-weight: 800; margin-bottom: .35rem; }
-.card-text { color:#9fb0ff; font-size:.95rem; line-height:1.55; }
+/* Robot emoji avatar */
+.robot-emoji {
+  font-size: 5rem;
+  margin-bottom: .6rem;
+}
+
+/* Title text */
+.robot-label {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color:#cfe1ff;
+}
+.robot-sub {
+  font-size:.9rem;
+  color:#9fb0ff;
+  margin-top:.3rem;
+}
 </style>
 </head>
 
 <body>
 
-<!-- soft shapes -->
 <div class="shape pink"></div>
 <div class="shape teal"></div>
 <div class="shape blue"></div>
@@ -208,49 +179,41 @@ body {
     </p>
 
     <div class="cta-row">
-      <a class="btn-primary" href="/Physical-AI-and-Humanoid-Robotics-book/docs/intro">Start Learning →</a>
-      <a class="btn-outline" href="/Physical-AI-and-Humanoid-Robotics-book/">Explore Programs</a>
+      <a class="btn-primary" href="/Physical-AI-and-Humanoid-Robotics-book/docs/intro">
+        Start Learning →
+      </a>
+
+      <a class="btn-outline" href="/Physical-AI-and-Humanoid-Robotics-book/">
+        Explore Programs
+      </a>
     </div>
   </div>
 
-  <!-- RIGHT — REACTIVE CARD -->
-  <div class="visual-wrapper">
-    <div class="card-tilt reactive-card">
-      <span class="glow"></span>
-
-      <div class="brain-icon">🧠</div>
-      <div class="card-title">Intelligent Systems Lab</div>
-      <div class="card-text">
-        Build & simulate embodied agents, robotic control systems,
-        and adaptive learning architectures.
-      </div>
+  <!-- RIGHT — INTERACTIVE ROBOT -->
+  <div class="robot-wrapper">
+    <div id="robot" class="robot">
+      <div class="robot-emoji">🤖</div>
+      <div class="robot-label">Interactive Robotics Lab</div>
+      <div class="robot-sub">Move your mouse — the robot reacts</div>
     </div>
   </div>
 
 </section>
 
 <script>
-const card = document.querySelector(".reactive-card");
+/* ROBOT PARALLAX MOTION */
+const robot = document.getElementById("robot");
 
-card.addEventListener("mousemove", e => {
-  const r = card.getBoundingClientRect();
-  const x = e.clientX - r.left;
-  const y = e.clientY - r.top;
+document.addEventListener("mousemove", (e) => {
+  const x = (window.innerWidth / 2 - e.clientX) / 40;
+  const y = (window.innerHeight / 2 - e.clientY) / 40;
 
-  // 3D tilt
-  const tiltY = ((x / r.width) - 0.5) * 18;
-  const tiltX = ((y / r.height) - 0.5) * -18;
-
-  card.style.transform =
-    `rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateZ(6px)`;
-
-  // glow hotspot follow
-  card.style.setProperty("--gx", `${x}px`);
-  card.style.setProperty("--gy", `${y}px`);
+  robot.style.transform = `rotateX(${y}deg) rotateY(${-x}deg) translateY(-4px)`;
 });
 
-card.addEventListener("mouseleave", () => {
-  card.style.transform = "";
+/* reset on mouse leave (mobile safe) */
+document.addEventListener("mouseleave", () => {
+  robot.style.transform = "rotateX(0) rotateY(0)";
 });
 </script>
 
