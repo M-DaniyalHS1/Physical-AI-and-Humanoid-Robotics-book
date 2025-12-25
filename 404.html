@@ -6,40 +6,80 @@
 <title>AI & Humanoid Robotics Learning Portal</title>
 
 <style>
+  /* ===== Background Layer (Colorful + Animated) ===== */
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: linear-gradient(-45deg,
+      #6a5af9,
+      #4f8bf9,
+      #48c6ef,
+      #7bde95,
+      #f6d365,
+      #fda085
+    );
+    background-size: 400% 400%;
+    animation: gradientShift 12s ease infinite;
+    color: #0f1b3d;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Optional reduced-motion accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    body { animation: none; }
+  }
+
+  /* ===== Main Container ===== */
   .custom-page-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 70vh;
+    min-height: 90vh;
+    padding: clamp(1.5rem, 3vw, 3rem);
     text-align: center;
-    padding: 2rem;
   }
 
+  /* Frosted glass card effect */
+  .content-card {
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: clamp(1.5rem, 2.5vw, 3rem);
+    max-width: 820px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.12);
+  }
+
+  /* ===== Typography ===== */
   .hero__title {
-    font-size: 3.2rem;
-    margin-bottom: 1rem;
-    color: #1d2d5f;
-    font-weight: 700;
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    margin-bottom: .75rem;
+    font-weight: 800;
+    color: #1b255a;
   }
 
   .subtitle {
-    font-size: 1.25rem;
-    color: #6c757d;
-    margin-bottom: 2rem;
-    max-width: 650px;
+    font-size: clamp(1rem, 1.6vw, 1.25rem);
+    color: #4a5568;
+    margin-bottom: 1.75rem;
   }
 
+  /* ===== Icon Animation ===== */
   .robot-icon {
-    font-size: 5rem;
-    margin: 1.5rem 0;
+    font-size: clamp(3.2rem, 5vw, 5rem);
+    margin: 1rem 0 1.5rem;
     color: #4f8bf9;
     animation: float 3s ease-in-out infinite;
   }
 
   @keyframes float {
     0% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
+    50% { transform: translateY(-12px); }
     100% { transform: translateY(0); }
   }
 
@@ -47,6 +87,7 @@
     .robot-icon { animation: none; }
   }
 
+  /* ===== Primary Button ===== */
   .primary-btn {
     display: inline-block;
     background: linear-gradient(135deg, #4f8bf9 0%, #6a5af9 100%);
@@ -54,33 +95,41 @@
     padding: 1rem 2.5rem;
     border-radius: 50px;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     border: 2px solid transparent;
-    box-shadow: 0 6px 18px rgba(79, 139, 249, 0.4);
-    transition: transform .25s ease, box-shadow .25s ease;
     text-decoration: none;
+    box-shadow: 0 8px 24px rgba(79, 139, 249, 0.45);
+    transition: transform .25s ease, box-shadow .25s ease;
   }
 
   .primary-btn:hover,
   .primary-btn:focus-visible {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 22px rgba(79, 139, 249, 0.6);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(79, 139, 249, 0.65);
     outline: none;
   }
 
+  /* ===== Other Links ===== */
   .other-links {
     margin-top: 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem 1rem;
+    justify-content: center;
   }
 
   .other-links a {
-    margin: 0 0.75rem;
-    color: #4f8bf9;
-    font-weight: 500;
+    color: #2c4be9;
+    font-weight: 600;
     text-decoration: none;
+    padding: .35rem .6rem;
+    border-radius: 8px;
+    transition: background .2s ease;
   }
 
   .other-links a:hover,
   .other-links a:focus-visible {
+    background: rgba(76, 110, 245, .12);
     text-decoration: underline;
   }
 </style>
@@ -89,27 +138,29 @@
 <body>
 
 <main class="custom-page-container">
+  <div class="content-card">
 
-  <div class="robot-icon" aria-hidden="true">🤖</div>
+    <div class="robot-icon" aria-hidden="true">🤖</div>
 
-  <h1 class="hero__title">Welcome to the AI & Robotics Learning Hub</h1>
+    <h1 class="hero__title">Welcome to the AI & Robotics Learning Hub</h1>
 
-  <p class="subtitle">
-    Explore concepts in Physical AI, Humanoid Robotics, and intelligent systems — with an interactive,
-    hands-on learning experience designed for students, developers, and researchers.
-  </p>
+    <p class="subtitle">
+      Explore concepts in Physical AI, Humanoid Robotics, and intelligent systems — with an interactive,
+      hands-on learning experience designed for students, developers, and researchers.
+    </p>
 
-  <a href="/Physical-AI-and-Humanoid-Robotics-book/docs/intro"
-     class="primary-btn"
-     role="button">
-     Start Learning
-  </a>
+    <a href="/Physical-AI-and-Humanoid-Robotics-book/docs/intro"
+      class="primary-btn"
+      role="button">
+      Start Learning
+    </a>
 
-  <div class="other-links">
-    <a href="/Physical-AI-and-Humanoid-Robotics-book/">Home</a>
-    <a href="javascript:history.back()">Go Back</a>
+    <div class="other-links">
+      <a href="/Physical-AI-and-Humanoid-Robotics-book/">Home</a>
+      <a href="javascript:history.back()">Go Back</a>
+    </div>
+
   </div>
-
 </main>
 
 </body>
