@@ -14,7 +14,7 @@ body {
   color: #e4e8ff;
 }
 
-/* ===== Floating Color Shapes (background design layer) ===== */
+/* ===== Floating Color Shapes ===== */
 .shape {
   position: absolute;
   filter: blur(40px);
@@ -41,12 +41,11 @@ body {
   padding: clamp(1.5rem, 3.5vw, 4rem);
 }
 
-/* Stack on mobile */
 @media (max-width: 880px) {
   .hero { grid-template-columns: 1fr; gap: 2.25rem; text-align: center; }
 }
 
-/* ===== Left — Text Block ===== */
+/* ===== Left Block ===== */
 .tagline {
   display: inline-block;
   padding: .45rem .8rem;
@@ -66,7 +65,6 @@ body {
 }
 
 .hero-title span {
-  color:#6ad9ff;
   background: linear-gradient(120deg,#7ed2ff,#7a7bff,#c78bff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -102,7 +100,6 @@ body {
   box-shadow: 0 16px 36px rgba(86,118,255,.35);
   transition: transform .22s ease, box-shadow .22s ease;
 }
-
 .btn-primary:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 22px 42px rgba(86,118,255,.55); }
 
 .btn-outline {
@@ -113,18 +110,16 @@ body {
   text-decoration:none;
   background: rgba(255,255,255,.05);
 }
+.btn-outline:hover { background: rgba(255,255,255,.12); }
 
-.btn-outline:hover {
-  background: rgba(255,255,255,.12);
-}
-
-/* ===== Right — Visual Card ===== */
+/* ===== Right — Reactive Visual Card ===== */
 .visual-wrapper {
   display:flex;
   justify-content:center;
   align-items:center;
 }
 
+/* base card */
 .card-tilt {
   background: radial-gradient(120% 120% at 10% 10%, #0c1433, #0b0f24 60%);
   border-radius: 26px;
@@ -136,6 +131,7 @@ body {
   position: relative;
 }
 
+/* glowing border blur */
 .card-tilt::after {
   content:"";
   position:absolute;
@@ -147,22 +143,43 @@ body {
   filter: blur(18px);
 }
 
-.brain-icon {
-  font-size: 4.5rem;
-  margin-bottom: 1rem;
+/* ==== REACTIVE UPGRADE ==== */
+.reactive-card {
+  transform-style: preserve-3d;
+  transition: transform .35s ease, box-shadow .35s ease;
+  cursor: pointer;
 }
 
-.card-title {
-  font-size: 1.6rem;
-  font-weight: 800;
-  margin-bottom: .35rem;
+.reactive-card:hover {
+  box-shadow: 0 42px 90px rgba(0,0,0,.65),
+              inset 0 0 0 1px rgba(255,255,255,.18);
 }
 
-.card-text {
-  color:#9fb0ff;
-  font-size:.95rem;
-  line-height:1.55;
+/* moving glow hotspot */
+.reactive-card .glow {
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  background: radial-gradient(
+    220px 140px at var(--gx,50%) var(--gy,50%),
+    rgba(140,200,255,.35),
+    transparent 60%
+  );
+  opacity:.55;
+  transition: opacity .25s ease;
 }
+.reactive-card:not(:hover) .glow { opacity:.18; }
+
+/* accessibility fallback */
+@media (prefers-reduced-motion: reduce), (max-width: 880px) {
+  .reactive-card { transform:none !important; }
+}
+
+/* content */
+.brain-icon { font-size: 4.5rem; margin-bottom: 1rem; }
+.card-title { font-size: 1.6rem; font-weight: 800; margin-bottom: .35rem; }
+.card-text { color:#9fb0ff; font-size:.95rem; line-height:1.55; }
 </style>
 </head>
 
@@ -174,6 +191,7 @@ body {
 <div class="shape blue"></div>
 
 <section class="hero">
+
   <!-- LEFT -->
   <div>
     <div class="tagline">PHYSICAL AI — HUMANOID SYSTEMS</div>
@@ -190,19 +208,16 @@ body {
     </p>
 
     <div class="cta-row">
-      <a class="btn-primary" href="/Physical-AI-and-Humanoid-Robotics-book/docs/intro">
-        Start Learning →
-      </a>
-
-      <a class="btn-outline" href="/Physical-AI-and-Humanoid-Robotics-book/">
-        Explore Programs
-      </a>
+      <a class="btn-primary" href="/Physical-AI-and-Humanoid-Robotics-book/docs/intro">Start Learning →</a>
+      <a class="btn-outline" href="/Physical-AI-and-Humanoid-Robotics-book/">Explore Programs</a>
     </div>
   </div>
 
-  <!-- RIGHT -->
+  <!-- RIGHT — REACTIVE CARD -->
   <div class="visual-wrapper">
-    <div class="card-tilt">
+    <div class="card-tilt reactive-card">
+      <span class="glow"></span>
+
       <div class="brain-icon">🧠</div>
       <div class="card-title">Intelligent Systems Lab</div>
       <div class="card-text">
@@ -211,7 +226,33 @@ body {
       </div>
     </div>
   </div>
+
 </section>
+
+<script>
+const card = document.querySelector(".reactive-card");
+
+card.addEventListener("mousemove", e => {
+  const r = card.getBoundingClientRect();
+  const x = e.clientX - r.left;
+  const y = e.clientY - r.top;
+
+  // 3D tilt
+  const tiltY = ((x / r.width) - 0.5) * 18;
+  const tiltX = ((y / r.height) - 0.5) * -18;
+
+  card.style.transform =
+    `rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateZ(6px)`;
+
+  // glow hotspot follow
+  card.style.setProperty("--gx", `${x}px`);
+  card.style.setProperty("--gy", `${y}px`);
+});
+
+card.addEventListener("mouseleave", () => {
+  card.style.transform = "";
+});
+</script>
 
 </body>
 </html>
