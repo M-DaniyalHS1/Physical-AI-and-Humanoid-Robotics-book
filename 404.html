@@ -14,7 +14,7 @@ body {
   overflow-x: hidden;
 }
 
-/* floating color blobs */
+/* Soft floating gradient shapes */
 .shape {
   position: absolute;
   filter: blur(40px);
@@ -30,7 +30,7 @@ body {
   @keyframes drift { from { transform: translateY(-10px);} to { transform: translateY(20px);} }
 }
 
-/* layout */
+/* ===== Layout ===== */
 .hero {
   display: grid;
   grid-template-columns: 1.1fr .9fr;
@@ -43,7 +43,7 @@ body {
   .hero { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
 }
 
-/* text block */
+/* ===== Text Block ===== */
 .tagline {
   display: inline-block;
   padding: .45rem .8rem;
@@ -75,7 +75,7 @@ body {
 .cta-row { display: flex; flex-wrap: wrap; gap: 1rem; }
 @media (max-width: 880px) { .cta-row { justify-content: center; } }
 
-/* buttons */
+/* ===== Buttons ===== */
 .btn-primary {
   padding: .95rem 2.3rem;
   border-radius: 14px;
@@ -101,119 +101,77 @@ body {
 }
 .btn-outline:hover { background: rgba(255,255,255,.12); }
 
-/* robot interactive area */
-.robot-wrapper {
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  perspective: 900px;
+/* ===== FEATURE ROBOT PANEL (Book-style hero) ===== */
+.feature-robot {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: radial-gradient(160% 140% at 60% 50%, #071023, #02040a 70%);
+
+  border-left: 1px solid rgba(255,255,255,.08);
+  overflow: visible;
+
+  box-shadow:
+    inset 0 0 40px rgba(0,0,0,.6),
+    -40px 0 100px rgba(0,0,0,.35);
 }
 
-/* robot container */
-.robot {
-  width: 340px;
-  height: 360px;
-  border-radius: 28px;
-  background: radial-gradient(120% 120% at 20% 10%, #0c1433, #070a16 70%);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  box-shadow: 0 26px 60px rgba(0,0,0,.55),
-              inset 0 0 0 1px rgba(255,255,255,.08);
-  position: relative;
+/* Robot hero image */
+.feature-robot img {
+  width: 78%;
+  max-width: 520px;
+
+  transform-origin: center;
   transform-style: preserve-3d;
-  will-change: transform;
+
+  transform: perspective(1200px)
+           rotateY(-8deg)
+           rotateX(2deg)
+           translateX(10px);
+
+  filter:
+    drop-shadow(0 40px 60px rgba(0,0,0,.55))
+    drop-shadow(-10px 10px 30px rgba(0,0,0,.45));
+
   transition: transform .25s ease-out;
 }
 
-/* glow rim */
-.robot::before {
-  content:"";
-  position:absolute;
-  inset:-2px;
-  border-radius:inherit;
-  background: radial-gradient(120% 140% at 40% 0%,
-    rgba(122,90,249,.55),
-    rgba(126,210,255,.25),
-    transparent 70%);
-  opacity:.35;
-  mix-blend: screen;
-  pointer-events:none;
+/* Hover lift */
+.feature-robot img:hover {
+  transform:
+    perspective(1200px)
+    rotateY(-4deg)
+    rotateX(1deg)
+    translateX(6px)
+    scale(1.03);
 }
 
-/* glow aura */
-.robot::after {
-  content:"";
-  position:absolute;
-  inset:-1px;
-  border-radius:inherit;
-  background: linear-gradient(145deg,#4f8bf9,#7ed2ff,#c78bff);
-  opacity:.28;
-  filter: blur(18px);
-  z-index:-1;
-}
-
-/* robot image */
-.robot-img {
-  width: 78%;
-  max-width: 240px;
-  object-fit: contain;
-  pointer-events: none;
-  transform: translateZ(40px);
-  filter: drop-shadow(0 16px 28px rgba(0,0,0,.55));
-  transition: transform .25s ease;
-}
-
-/* hover depth pop */
-.robot:hover .robot-img {
-  transform: translateZ(60px) scale(1.06);
-}
-
-/* labels */
-.robot-label {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color:#cfe1ff;
-  margin-top: .4rem;
-}
-.robot-sub {
-  font-size:.9rem;
-  color:#9fb0ff;
-  margin-top:.25rem;
-}
-
-/* idle float animation */
-@keyframes floatbot {
-  0% { transform: translateY(-2px); }
-  50% { transform: translateY(6px); }
-  100% { transform: translateY(-2px); }
-}
-.robot.idle {
-  animation: floatbot 4s ease-in-out infinite;
-}
-
-/* click pulse effect */
-.robot.pulse {
-  animation: pulseGlow .5s ease-out;
-}
-@keyframes pulseGlow {
-  0% { box-shadow: 0 0 0 rgba(122,90,249,.0); }
-  100% { box-shadow: 0 0 40px rgba(122,90,249,.55); }
+/* Mobile center layout */
+@media (max-width: 880px) {
+  .feature-robot {
+    border-left: none;
+    border-top: 1px solid rgba(255,255,255,.1);
+    padding: 2rem 0;
+  }
+  .feature-robot img {
+    max-width: 420px;
+    transform: none;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- background shapes -->
 <div class="shape pink"></div>
 <div class="shape teal"></div>
 <div class="shape blue"></div>
 
 <section class="hero">
 
-  <!-- LEFT -->
+  <!-- LEFT CONTENT -->
   <div>
     <div class="tagline">PHYSICAL AI — HUMANOID SYSTEMS</div>
 
@@ -232,78 +190,51 @@ body {
       <a class="btn-primary" href="/Physical-AI-and-Humanoid-Robotics-book/docs/intro">
         Start Learning →
       </a>
+
       <a class="btn-outline" href="/Physical-AI-and-Humanoid-Robotics-book/">
         Explore Programs
       </a>
     </div>
   </div>
 
-  <!-- RIGHT — INTERACTIVE ROBOT -->
-  <div class="robot-wrapper">
-    <div id="robot" class="robot idle">
-
-      <img
-        src="https://img.freepik.com/premium-psd/3d-rendering-digital-cute-robot-transparent-background-ai-generated_768733-37116.jpg?w=2000"
-        class="robot-img"
-        alt="3D friendly AI robot"
-      />
-
-      <div class="robot-label">Interactive Robotics Lab</div>
-      <div class="robot-sub">Move your mouse — the robot reacts</div>
-    </div>
+  <!-- RIGHT FEATURE ROBOT (Book-style object) -->
+  <div class="feature-robot">
+    <img
+      id="robotImg"
+      src="https://img.freepik.com/premium-psd/3d-rendering-digital-cute-robot-transparent-background-ai-generated_768733-37116.jpg?w=2000"
+      alt="3D AI Robot"
+    />
   </div>
 
 </section>
 
 <script>
-const robot = document.getElementById("robot");
+/* Subtle mouse-reactive hero tilt */
+const robotImg = document.getElementById("robotImg");
+let x = 0, y = 0, tx = 0, ty = 0;
 
-let targetX = 0, targetY = 0;
-let currentX = 0, currentY = 0;
-
-/* mouse movement parallax */
 document.addEventListener("mousemove", e => {
   const cx = window.innerWidth / 2;
   const cy = window.innerHeight / 2;
 
-  targetX = (e.clientX - cx) / 25;
-  targetY = (e.clientY - cy) / 25;
-
-  robot.classList.remove("idle");
+  tx = (e.clientX - cx) / 40;
+  ty = (e.clientY - cy) / 40;
 });
 
-/* smooth inertia */
 function animate() {
-  currentX += (targetX - currentX) * 0.08;
-  currentY += (targetY - currentY) * 0.08;
+  x += (tx - x) * 0.08;
+  y += (ty - y) * 0.08;
 
-  robot.style.transform =
-    `translateZ(20px)
-     rotateY(${currentX}deg)
-     rotateX(${-currentY}deg)
+  robotImg.style.transform =
+    `perspective(1200px)
+     rotateY(${x - 8}deg)
+     rotateX(${-(y/2)}deg)
+     translateX(10px)
      scale(1.02)`;
 
   requestAnimationFrame(animate);
 }
 animate();
-
-/* return to idle when leaving */
-document.addEventListener("mouseleave", () => {
-  targetX = 0; targetY = 0;
-  robot.classList.add("idle");
-});
-
-/* click pulse */
-robot.addEventListener("click", () => {
-  robot.classList.remove("pulse");
-  void robot.offsetWidth;
-  robot.classList.add("pulse");
-});
-
-/* mobile touch feedback */
-document.addEventListener("touchstart", () => {
-  robot.classList.add("pulse");
-});
 </script>
 
 </body>
