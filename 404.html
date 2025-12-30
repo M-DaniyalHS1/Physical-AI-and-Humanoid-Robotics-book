@@ -14,7 +14,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Floating glow blobs */
+/* Ambient glow blobs */
 .shape {
   position: absolute;
   filter: blur(40px);
@@ -25,6 +25,7 @@ body {
 .shape.blue { background:#4f8bf9; width:300px; height:300px; bottom:10%; right:5%; border-radius:60% 40% 55% 45%; }
 .shape.teal { background:#3fe3c6; width:260px; height:260px; top:40%; right:28%; border-radius:50% 60% 40% 70%; }
 
+/* Motion */
 @media (prefers-reduced-motion: no-preference) {
   .shape { animation: drift 12s ease-in-out infinite alternate; }
   @keyframes drift { from { transform: translateY(-10px);} to { transform: translateY(20px);} }
@@ -39,12 +40,11 @@ body {
   min-height: 92vh;
   padding: clamp(1.5rem, 3.5vw, 4rem);
 }
-
 @media (max-width: 880px) {
   .hero { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
 }
 
-/* ===== Text Column ===== */
+/* ===== Text side ===== */
 .tagline {
   display: inline-block;
   padding: .45rem .8rem;
@@ -73,11 +73,9 @@ body {
   line-height: 1.6;
   margin-bottom: 2rem;
 }
-
 .cta-row { display: flex; flex-wrap: wrap; gap: 1rem; }
 @media (max-width: 880px) { .cta-row { justify-content: center; } }
 
-/* ===== Buttons ===== */
 .btn-primary {
   padding: .95rem 2.3rem;
   border-radius: 14px;
@@ -101,7 +99,7 @@ body {
 }
 .btn-outline:hover { background: rgba(255,255,255,.12); }
 
-/* ===== ROBOT HERO (book-style placement) ===== */
+/* ===== ROBOT Feature Area ===== */
 .feature-robot {
   display:flex;
   justify-content:center;
@@ -109,36 +107,36 @@ body {
   perspective: 1400px;
 }
 
-/* robot image blending into page */
+/* Robot visually merged into layout */
 .robot-mask {
-  width: 82%;
-  max-width: 520px;
+  width: 88%;
+  max-width: 560px;
   object-fit: contain;
 
-  /* hide ugly square bg */
-  -webkit-mask-image: radial-gradient(circle at 50% 42%,
+  /* remove box & blend edges smoothly */
+  -webkit-mask-image: radial-gradient(circle at 50% 55%,
       rgba(255,255,255,1) 58%,
       rgba(255,255,255,0) 92%);
-  mask-image: radial-gradient(circle at 50% 42%,
+  mask-image: radial-gradient(circle at 50% 55%,
       rgba(255,255,255,1) 58%,
       rgba(255,255,255,0) 92%);
 
-  /* book-like tilt */
-  transform: perspective(1400px) rotateY(-10deg) rotateX(3deg);
+  /* cinematic tilt */
+  transform: perspective(1400px) rotateY(-10deg) rotateX(4deg);
 
-  /* fake volumetric shadow */
+  /* depth + floor-like shadow */
   filter:
-    drop-shadow(0 40px 70px rgba(0,0,0,.55))
-    drop-shadow(-14px 18px 40px rgba(0,0,0,.45));
+    drop-shadow(0 40px 75px rgba(0,0,0,.55))
+    drop-shadow(-14px 18px 38px rgba(0,0,0,.45));
 
   transition: transform .28s ease-out;
 }
 
-/* subtle hover response */
+/* subtle hover enhancement */
 .robot-mask:hover {
   transform: perspective(1400px)
-    rotateY(-5deg)
-    rotateX(1deg)
+    rotateY(-4deg)
+    rotateX(2deg)
     scale(1.03);
 }
 </style>
@@ -146,65 +144,58 @@ body {
 
 <body>
 
-<!-- background glow shapes -->
 <div class="shape pink"></div>
 <div class="shape teal"></div>
 <div class="shape blue"></div>
 
 <section class="hero">
 
-  <!-- LEFT TEXT -->
   <div>
     <div class="tagline">PHYSICAL AI — HUMANOID SYSTEMS</div>
 
     <h1 class="hero-title">
-      The Future of<br>
-      <span>AI & Robotics Learning</span>
+      Intelligent Systems<br>
+      <span>Robotics Innovation Lab</span>
     </h1>
 
     <p class="subtext">
-      A hands-on portal for exploring Physical AI,
-      Humanoid Robotics, and intelligent cyber-physical systems —
-      designed for students, builders, and researchers shaping tomorrow.
+      Explore human-centered robotics, cyber-physical intelligence,
+      and real-world embodied AI research — built for creators,
+      engineers, and future technologists.
     </p>
 
     <div class="cta-row">
-      <a class="btn-primary" href="#">
-        Start Learning →
-      </a>
-
-      <a class="btn-outline" href="#">
-        Explore Programs
-      </a>
+      <a class="btn-primary" href="#">Get Started →</a>
+      <a class="btn-outline" href="#">View Projects</a>
     </div>
   </div>
 
-  <!-- RIGHT — BOOK-STYLE FLOATING ROBOT -->
+  <!-- Robot integrated into layout -->
   <div class="feature-robot">
     <img
       id="robotImg"
       class="robot-mask"
-      src="https://img.freepik.com/premium-psd/3d-rendering-digital-cute-robot-transparent-background-ai-generated_768733-37116.jpg?w=2000"
-      alt="AI Robot"
+      src="https://preview.free3d.com/img/2018/05/2206063308413338855/4aobpqyx.jpg"
+      alt="3D Robot"
     />
   </div>
 
 </section>
 
 <script>
-/* Mouse-tilt parallax */
+/* Cursor-reactive parallax tilt */
 const robot = document.getElementById("robotImg");
 
 document.addEventListener("mousemove", e => {
   const x = (window.innerWidth / 2 - e.clientX) / 40;
   const y = (window.innerHeight / 2 - e.clientY) / 40;
   robot.style.transform =
-    `perspective(1400px) rotateX(${y}deg) rotateY(${-x}deg)`;
+    `perspective(1400px) rotateX(${y+2}deg) rotateY(${-x-6}deg)`;
 });
 
 document.addEventListener("mouseleave", () => {
   robot.style.transform =
-    "perspective(1400px) rotateX(0deg) rotateY(-10deg)";
+    "perspective(1400px) rotateY(-10deg) rotateX(4deg)";
 });
 </script>
 
