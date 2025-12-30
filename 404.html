@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>AI & Robotics Learning Hub</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merged Robot Layout</title>
 <style>
+/* ===== Body ===== */
 body {
   margin: 0;
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -14,7 +14,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Ambient glow blobs */
+/* ===== Ambient shapes ===== */
 .shape {
   position: absolute;
   filter: blur(40px);
@@ -25,13 +25,12 @@ body {
 .shape.blue { background:#4f8bf9; width:300px; height:300px; bottom:10%; right:5%; border-radius:60% 40% 55% 45%; }
 .shape.teal { background:#3fe3c6; width:260px; height:260px; top:40%; right:28%; border-radius:50% 60% 40% 70%; }
 
-/* Motion */
 @media (prefers-reduced-motion: no-preference) {
   .shape { animation: drift 12s ease-in-out infinite alternate; }
   @keyframes drift { from { transform: translateY(-10px);} to { transform: translateY(20px);} }
 }
 
-/* ===== Layout ===== */
+/* ===== Hero Section ===== */
 .hero {
   display: grid;
   grid-template-columns: 1.1fr .9fr;
@@ -44,7 +43,7 @@ body {
   .hero { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
 }
 
-/* ===== Text side ===== */
+/* ===== Text ===== */
 .tagline {
   display: inline-block;
   padding: .45rem .8rem;
@@ -99,29 +98,29 @@ body {
 }
 .btn-outline:hover { background: rgba(255,255,255,.12); }
 
-/* ===== ROBOT Feature Area ===== */
+/* ===== Robot Feature Area ===== */
 .feature-robot {
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   perspective: 1400px;
 
-  /* background behind robot matching page layout */
+  /* background matches page */
   background: radial-gradient(120% 140% at 10% -10%, #151d3b, #05070f 60%);
   border-radius: 20px;
   padding: 1rem;
 }
 
-/* Robot image */
+/* Robot image styling */
 .robot-mask {
   width: 88%;
   max-width: 560px;
   object-fit: contain;
 
-  /* cinematic tilt */
+  /* tilt for 3D effect */
   transform: perspective(1400px) rotateY(-10deg) rotateX(4deg);
 
-  /* depth + floor-like shadow */
+  /* depth shadows */
   filter:
     drop-shadow(0 40px 75px rgba(0,0,0,.55))
     drop-shadow(-14px 18px 38px rgba(0,0,0,.45));
@@ -129,7 +128,7 @@ body {
   transition: transform .28s ease-out;
 }
 
-/* subtle hover enhancement */
+/* Hover tilt effect */
 .robot-mask:hover {
   transform: perspective(1400px)
     rotateY(-4deg)
@@ -138,7 +137,6 @@ body {
 }
 </style>
 </head>
-
 <body>
 
 <div class="shape pink"></div>
@@ -147,6 +145,7 @@ body {
 
 <section class="hero">
 
+  <!-- Text Content -->
   <div>
     <div class="tagline">PHYSICAL AI — HUMANOID SYSTEMS</div>
 
@@ -167,21 +166,16 @@ body {
     </div>
   </div>
 
-  <!-- Robot integrated into layout -->
+  <!-- Robot Image -->
   <div class="feature-robot">
-    <img
-      id="robotImg"
-      class="robot-mask"
-      src="https://preview.free3d.com/img/2018/05/2206063308413338855/4aobpqyx.jpg"
-      alt="3D Robot"
-    />
+    <img src="4c959317-729a-4625-9799-71d3d2346d25.png" alt="Robot" class="robot-mask">
   </div>
 
 </section>
 
 <script>
 /* Cursor-reactive parallax tilt */
-const robot = document.getElementById("robotImg");
+const robot = document.querySelector(".robot-mask");
 
 document.addEventListener("mousemove", e => {
   const x = (window.innerWidth / 2 - e.clientX) / 40;
