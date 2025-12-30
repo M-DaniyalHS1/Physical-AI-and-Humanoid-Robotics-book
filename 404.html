@@ -107,19 +107,11 @@ body {
   perspective: 1400px;
 }
 
-/* Robot visually merged into layout */
+/* Robot image with transparent background */
 .robot-mask {
   width: 88%;
   max-width: 560px;
   object-fit: contain;
-
-  /* remove box & blend edges smoothly */
-  -webkit-mask-image: radial-gradient(circle at 50% 55%,
-      rgba(255,255,255,1) 58%,
-      rgba(255,255,255,0) 92%);
-  mask-image: radial-gradient(circle at 50% 55%,
-      rgba(255,255,255,1) 58%,
-      rgba(255,255,255,0) 92%);
 
   /* cinematic tilt */
   transform: perspective(1400px) rotateY(-10deg) rotateX(4deg);
@@ -175,7 +167,7 @@ body {
     <img
       id="robotImg"
       class="robot-mask"
-      src="https://preview.free3d.com/img/2018/05/2206063308413338855/4aobpqyx.jpg"
+      src="https://i.ibb.co/ck3FhVf/robot-transparent.png" 
       alt="3D Robot"
     />
   </div>
