@@ -14,7 +14,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Soft floating color blobs */
+/* floating color blobs */
 .shape {
   position: absolute;
   filter: blur(40px);
@@ -30,7 +30,7 @@ body {
   @keyframes drift { from { transform: translateY(-10px);} to { transform: translateY(20px);} }
 }
 
-/* ===== Layout ===== */
+/* layout */
 .hero {
   display: grid;
   grid-template-columns: 1.1fr .9fr;
@@ -43,7 +43,7 @@ body {
   .hero { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
 }
 
-/* ===== Text Block ===== */
+/* text block */
 .tagline {
   display: inline-block;
   padding: .45rem .8rem;
@@ -75,7 +75,7 @@ body {
 .cta-row { display: flex; flex-wrap: wrap; gap: 1rem; }
 @media (max-width: 880px) { .cta-row { justify-content: center; } }
 
-/* ===== Buttons ===== */
+/* buttons */
 .btn-primary {
   padding: .95rem 2.3rem;
   border-radius: 14px;
@@ -87,8 +87,10 @@ body {
   box-shadow: 0 16px 36px rgba(86,118,255,.35);
   transition: transform .22s ease, box-shadow .22s ease;
 }
-.btn-primary:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 22px 42px rgba(86,118,255,.55); }
-
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 22px 42px rgba(86,118,255,.55);
+}
 .btn-outline {
   padding: .95rem 2rem;
   border-radius: 14px;
@@ -99,7 +101,7 @@ body {
 }
 .btn-outline:hover { background: rgba(255,255,255,.12); }
 
-/* ===== ROBOT INTERACTION AREA ===== */
+/* robot interactive area */
 .robot-wrapper {
   display:flex;
   justify-content:center;
@@ -107,10 +109,10 @@ body {
   perspective: 900px;
 }
 
-/* floating robot card */
+/* robot container */
 .robot {
-  width: 320px;
-  height: 320px;
+  width: 340px;
+  height: 360px;
   border-radius: 28px;
   background: radial-gradient(120% 120% at 20% 10%, #0c1433, #070a16 70%);
   display:flex;
@@ -119,103 +121,49 @@ body {
   justify-content:center;
   box-shadow: 0 26px 60px rgba(0,0,0,.55),
               inset 0 0 0 1px rgba(255,255,255,.08);
-  transition: transform .2s ease-out;
   position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform .25s ease-out;
 }
 
-/* glow border */
+/* glow rim */
+.robot::before {
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius:inherit;
+  background: radial-gradient(120% 140% at 40% 0%,
+    rgba(122,90,249,.55),
+    rgba(126,210,255,.25),
+    transparent 70%);
+  opacity:.35;
+  mix-blend: screen;
+  pointer-events:none;
+}
+
+/* glow aura */
 .robot::after {
   content:"";
   position:absolute;
   inset:-1px;
   border-radius:inherit;
   background: linear-gradient(145deg,#4f8bf9,#7ed2ff,#c78bff);
-  opacity:.35;
+  opacity:.28;
   filter: blur(18px);
   z-index:-1;
 }
 
-/* Robot emoji avatar */
-.robot-emoji {
-  font-size: 5rem;
-  margin-bottom: .6rem;
+/* robot image */
+.robot-img {
+  width: 78%;
+  max-width: 240px;
+  object-fit: contain;
+  pointer-events: none;
+  transform: translateZ(40px);
+  filter: drop-shadow(0 16px 28px rgba(0,0,0,.55));
+  transition: transform .25s ease;
 }
 
-/* Title text */
-.robot-label {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color:#cfe1ff;
-}
-.robot-sub {
-  font-size:.9rem;
-  color:#9fb0ff;
-  margin-top:.3rem;
-}
-</style>
-</head>
-
-<body>
-
-<div class="shape pink"></div>
-<div class="shape teal"></div>
-<div class="shape blue"></div>
-
-<section class="hero">
-
-  <!-- LEFT -->
-  <div>
-    <div class="tagline">PHYSICAL AI — HUMANOID SYSTEMS</div>
-
-    <h1 class="hero-title">
-      The Future of<br>
-      <span>AI & Robotics Learning</span>
-    </h1>
-
-    <p class="subtext">
-      A hands-on portal for exploring Physical AI, Humanoid Robotics,
-      and intelligent cyber-physical systems — designed for students,
-      builders, and researchers shaping tomorrow.
-    </p>
-
-    <div class="cta-row">
-      <a class="btn-primary" href="/Physical-AI-and-Humanoid-Robotics-book/docs/intro">
-        Start Learning →
-      </a>
-
-      <a class="btn-outline" href="/Physical-AI-and-Humanoid-Robotics-book/">
-        Explore Programs
-      </a>
-    </div>
-  </div>
-
-  <!-- RIGHT — INTERACTIVE ROBOT -->
-  <div class="robot-wrapper">
-    <div id="robot" class="robot">
-      <div class="robot-emoji">🤖</div>
-      <div class="robot-label">Interactive Robotics Lab</div>
-      <div class="robot-sub">Move your mouse — the robot reacts</div>
-    </div>
-  </div>
-
-</section>
-
-<script>
-/* ROBOT PARALLAX MOTION */
-const robot = document.getElementById("robot");
-
-document.addEventListener("mousemove", (e) => {
-  const x = (window.innerWidth / 2 - e.clientX) / 40;
-  const y = (window.innerHeight / 2 - e.clientY) / 40;
-
-  robot.style.transform = `rotateX(${y}deg) rotateY(${-x}deg) translateY(-4px)`;
-});
-
-/* reset on mouse leave (mobile safe) */
-document.addEventListener("mouseleave", () => {
-  robot.style.transform = "rotateX(0) rotateY(0)";
-});
-</script>
-
-</body>
-</html>
+/* hover depth pop */
+.robot:hover .robot-i
