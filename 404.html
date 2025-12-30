@@ -14,7 +14,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Soft floating gradient shapes */
+/* Floating glow blobs */
 .shape {
   position: absolute;
   filter: blur(40px);
@@ -39,11 +39,12 @@ body {
   min-height: 92vh;
   padding: clamp(1.5rem, 3.5vw, 4rem);
 }
+
 @media (max-width: 880px) {
   .hero { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
 }
 
-/* ===== Text Block ===== */
+/* ===== Text Column ===== */
 .tagline {
   display: inline-block;
   padding: .45rem .8rem;
@@ -72,6 +73,7 @@ body {
   line-height: 1.6;
   margin-bottom: 2rem;
 }
+
 .cta-row { display: flex; flex-wrap: wrap; gap: 1rem; }
 @media (max-width: 880px) { .cta-row { justify-content: center; } }
 
@@ -87,10 +89,8 @@ body {
   box-shadow: 0 16px 36px rgba(86,118,255,.35);
   transition: transform .22s ease, box-shadow .22s ease;
 }
-.btn-primary:hover {
-  transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 22px 42px rgba(86,118,255,.55);
-}
+.btn-primary:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 22px 42px rgba(86,118,255,.55); }
+
 .btn-outline {
   padding: .95rem 2rem;
   border-radius: 14px;
@@ -101,77 +101,59 @@ body {
 }
 .btn-outline:hover { background: rgba(255,255,255,.12); }
 
-/* ===== FEATURE ROBOT PANEL (Book-style hero) ===== */
+/* ===== ROBOT HERO (book-style placement) ===== */
 .feature-robot {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  background: radial-gradient(160% 140% at 60% 50%, #071023, #02040a 70%);
-
-  border-left: 1px solid rgba(255,255,255,.08);
-  overflow: visible;
-
-  box-shadow:
-    inset 0 0 40px rgba(0,0,0,.6),
-    -40px 0 100px rgba(0,0,0,.35);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  perspective: 1400px;
 }
 
-/* Robot hero image */
-.feature-robot img {
-  width: 78%;
+/* robot image blending into page */
+.robot-mask {
+  width: 82%;
   max-width: 520px;
+  object-fit: contain;
 
-  transform-origin: center;
-  transform-style: preserve-3d;
+  /* hide ugly square bg */
+  -webkit-mask-image: radial-gradient(circle at 50% 42%,
+      rgba(255,255,255,1) 58%,
+      rgba(255,255,255,0) 92%);
+  mask-image: radial-gradient(circle at 50% 42%,
+      rgba(255,255,255,1) 58%,
+      rgba(255,255,255,0) 92%);
 
-  transform: perspective(1200px)
-           rotateY(-8deg)
-           rotateX(2deg)
-           translateX(10px);
+  /* book-like tilt */
+  transform: perspective(1400px) rotateY(-10deg) rotateX(3deg);
 
+  /* fake volumetric shadow */
   filter:
-    drop-shadow(0 40px 60px rgba(0,0,0,.55))
-    drop-shadow(-10px 10px 30px rgba(0,0,0,.45));
+    drop-shadow(0 40px 70px rgba(0,0,0,.55))
+    drop-shadow(-14px 18px 40px rgba(0,0,0,.45));
 
-  transition: transform .25s ease-out;
+  transition: transform .28s ease-out;
 }
 
-/* Hover lift */
-.feature-robot img:hover {
-  transform:
-    perspective(1200px)
-    rotateY(-4deg)
+/* subtle hover response */
+.robot-mask:hover {
+  transform: perspective(1400px)
+    rotateY(-5deg)
     rotateX(1deg)
-    translateX(6px)
     scale(1.03);
-}
-
-/* Mobile center layout */
-@media (max-width: 880px) {
-  .feature-robot {
-    border-left: none;
-    border-top: 1px solid rgba(255,255,255,.1);
-    padding: 2rem 0;
-  }
-  .feature-robot img {
-    max-width: 420px;
-    transform: none;
-  }
 }
 </style>
 </head>
 
 <body>
 
+<!-- background glow shapes -->
 <div class="shape pink"></div>
 <div class="shape teal"></div>
 <div class="shape blue"></div>
 
 <section class="hero">
 
-  <!-- LEFT CONTENT -->
+  <!-- LEFT TEXT -->
   <div>
     <div class="tagline">PHYSICAL AI — HUMANOID SYSTEMS</div>
 
@@ -181,60 +163,49 @@ body {
     </h1>
 
     <p class="subtext">
-      A hands-on portal for exploring Physical AI, Humanoid Robotics,
-      and intelligent cyber-physical systems — designed for students,
-      builders, and researchers shaping tomorrow.
+      A hands-on portal for exploring Physical AI,
+      Humanoid Robotics, and intelligent cyber-physical systems —
+      designed for students, builders, and researchers shaping tomorrow.
     </p>
 
     <div class="cta-row">
-      <a class="btn-primary" href="/Physical-AI-and-Humanoid-Robotics-book/docs/intro">
+      <a class="btn-primary" href="#">
         Start Learning →
       </a>
 
-      <a class="btn-outline" href="/Physical-AI-and-Humanoid-Robotics-book/">
+      <a class="btn-outline" href="#">
         Explore Programs
       </a>
     </div>
   </div>
 
-  <!-- RIGHT FEATURE ROBOT (Book-style object) -->
+  <!-- RIGHT — BOOK-STYLE FLOATING ROBOT -->
   <div class="feature-robot">
     <img
       id="robotImg"
+      class="robot-mask"
       src="https://img.freepik.com/premium-psd/3d-rendering-digital-cute-robot-transparent-background-ai-generated_768733-37116.jpg?w=2000"
-      alt="3D AI Robot"
+      alt="AI Robot"
     />
   </div>
 
 </section>
 
 <script>
-/* Subtle mouse-reactive hero tilt */
-const robotImg = document.getElementById("robotImg");
-let x = 0, y = 0, tx = 0, ty = 0;
+/* Mouse-tilt parallax */
+const robot = document.getElementById("robotImg");
 
 document.addEventListener("mousemove", e => {
-  const cx = window.innerWidth / 2;
-  const cy = window.innerHeight / 2;
-
-  tx = (e.clientX - cx) / 40;
-  ty = (e.clientY - cy) / 40;
+  const x = (window.innerWidth / 2 - e.clientX) / 40;
+  const y = (window.innerHeight / 2 - e.clientY) / 40;
+  robot.style.transform =
+    `perspective(1400px) rotateX(${y}deg) rotateY(${-x}deg)`;
 });
 
-function animate() {
-  x += (tx - x) * 0.08;
-  y += (ty - y) * 0.08;
-
-  robotImg.style.transform =
-    `perspective(1200px)
-     rotateY(${x - 8}deg)
-     rotateX(${-(y/2)}deg)
-     translateX(10px)
-     scale(1.02)`;
-
-  requestAnimationFrame(animate);
-}
-animate();
+document.addEventListener("mouseleave", () => {
+  robot.style.transform =
+    "perspective(1400px) rotateX(0deg) rotateY(-10deg)";
+});
 </script>
 
 </body>
