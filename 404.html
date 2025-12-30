@@ -166,4 +166,145 @@ body {
 }
 
 /* hover depth pop */
-.robot:hover .robot-i
+.robot:hover .robot-img {
+  transform: translateZ(60px) scale(1.06);
+}
+
+/* labels */
+.robot-label {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color:#cfe1ff;
+  margin-top: .4rem;
+}
+.robot-sub {
+  font-size:.9rem;
+  color:#9fb0ff;
+  margin-top:.25rem;
+}
+
+/* idle float animation */
+@keyframes floatbot {
+  0% { transform: translateY(-2px); }
+  50% { transform: translateY(6px); }
+  100% { transform: translateY(-2px); }
+}
+.robot.idle {
+  animation: floatbot 4s ease-in-out infinite;
+}
+
+/* click pulse effect */
+.robot.pulse {
+  animation: pulseGlow .5s ease-out;
+}
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 rgba(122,90,249,.0); }
+  100% { box-shadow: 0 0 40px rgba(122,90,249,.55); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- background shapes -->
+<div class="shape pink"></div>
+<div class="shape teal"></div>
+<div class="shape blue"></div>
+
+<section class="hero">
+
+  <!-- LEFT -->
+  <div>
+    <div class="tagline">PHYSICAL AI — HUMANOID SYSTEMS</div>
+
+    <h1 class="hero-title">
+      The Future of<br>
+      <span>AI & Robotics Learning</span>
+    </h1>
+
+    <p class="subtext">
+      A hands-on portal for exploring Physical AI, Humanoid Robotics,
+      and intelligent cyber-physical systems — designed for students,
+      builders, and researchers shaping tomorrow.
+    </p>
+
+    <div class="cta-row">
+      <a class="btn-primary" href="/Physical-AI-and-Humanoid-Robotics-book/docs/intro">
+        Start Learning →
+      </a>
+      <a class="btn-outline" href="/Physical-AI-and-Humanoid-Robotics-book/">
+        Explore Programs
+      </a>
+    </div>
+  </div>
+
+  <!-- RIGHT — INTERACTIVE ROBOT -->
+  <div class="robot-wrapper">
+    <div id="robot" class="robot idle">
+
+      <img
+        src="https://img.freepik.com/premium-psd/3d-rendering-digital-cute-robot-transparent-background-ai-generated_768733-37116.jpg?w=2000"
+        class="robot-img"
+        alt="3D friendly AI robot"
+      />
+
+      <div class="robot-label">Interactive Robotics Lab</div>
+      <div class="robot-sub">Move your mouse — the robot reacts</div>
+    </div>
+  </div>
+
+</section>
+
+<script>
+const robot = document.getElementById("robot");
+
+let targetX = 0, targetY = 0;
+let currentX = 0, currentY = 0;
+
+/* mouse movement parallax */
+document.addEventListener("mousemove", e => {
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+
+  targetX = (e.clientX - cx) / 25;
+  targetY = (e.clientY - cy) / 25;
+
+  robot.classList.remove("idle");
+});
+
+/* smooth inertia */
+function animate() {
+  currentX += (targetX - currentX) * 0.08;
+  currentY += (targetY - currentY) * 0.08;
+
+  robot.style.transform =
+    `translateZ(20px)
+     rotateY(${currentX}deg)
+     rotateX(${-currentY}deg)
+     scale(1.02)`;
+
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* return to idle when leaving */
+document.addEventListener("mouseleave", () => {
+  targetX = 0; targetY = 0;
+  robot.classList.add("idle");
+});
+
+/* click pulse */
+robot.addEventListener("click", () => {
+  robot.classList.remove("pulse");
+  void robot.offsetWidth;
+  robot.classList.add("pulse");
+});
+
+/* mobile touch feedback */
+document.addEventListener("touchstart", () => {
+  robot.classList.add("pulse");
+});
+</script>
+
+</body>
+</html>
