@@ -1,194 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Merged Robot Layout</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Robotics Innovation Lab</title>
+
 <style>
-/* ===== Body ===== */
-body {
-  margin: 0;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+body{
+  margin:0;
+  font-family: Inter, system-ui, Arial;
   background: radial-gradient(120% 140% at 10% -10%, #151d3b, #05070f 60%);
-  color: #e4e8ff;
-  overflow-x: hidden;
+  color:#e4e8ff;
 }
 
-/* ===== Ambient shapes ===== */
-.shape {
-  position: absolute;
-  filter: blur(40px);
-  opacity: .45;
-  z-index: -1;
+/* floating glow blobs */
+.shape{
+  position:absolute;
+  filter:blur(40px);
+  opacity:.45;
+  z-index:-1;
 }
-.shape.pink { background:#ff6ec7; width:360px; height:360px; top:10%; left:-6%; border-radius:40% 55% 50% 65%; }
-.shape.blue { background:#4f8bf9; width:300px; height:300px; bottom:10%; right:5%; border-radius:60% 40% 55% 45%; }
-.shape.teal { background:#3fe3c6; width:260px; height:260px; top:40%; right:28%; border-radius:50% 60% 40% 70%; }
+.shape.pink{background:#ff6ec7;width:360px;height:360px;top:8%;left:-6%;border-radius:40% 55% 50% 65%;}
+.shape.blue{background:#4f8bf9;width:300px;height:300px;bottom:10%;right:5%;border-radius:60% 40% 55% 45%;}
+.shape.teal{background:#3fe3c6;width:260px;height:260px;top:42%;right:26%;border-radius:50% 60% 40% 70%;}
 
-@media (prefers-reduced-motion: no-preference) {
-  .shape { animation: drift 12s ease-in-out infinite alternate; }
-  @keyframes drift { from { transform: translateY(-10px);} to { transform: translateY(20px);} }
+.hero{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:4rem;
+  align-items:center;
+  min-height:92vh;
+  padding:clamp(1.5rem,3.5vw,4rem);
 }
-
-/* ===== Hero Section ===== */
-.hero {
-  display: grid;
-  grid-template-columns: 1.1fr .9fr;
-  gap: 4rem;
-  align-items: center;
-  min-height: 92vh;
-  padding: clamp(1.5rem, 3.5vw, 4rem);
-}
-@media (max-width: 880px) {
-  .hero { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;text-align:center;gap:2.5rem;}
 }
 
-/* ===== Text ===== */
-.tagline {
-  display: inline-block;
-  padding: .45rem .8rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.15);
+.tagline{
+  display:inline-block;
+  padding:.45rem .8rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.15);
   color:#8fb3ff;
   font-size:.8rem;
   letter-spacing:.1em;
-  margin-bottom: .8rem;
 }
-.hero-title {
-  font-size: clamp(2.4rem, 4.4vw, 4.2rem);
-  line-height: 1.05;
-  font-weight: 900;
-  margin: .35rem 0 1rem;
+.hero-title{
+  font-size:clamp(2.4rem,4.4vw,4.2rem);
+  line-height:1.05;
+  margin:.4rem 0 1rem;
+  font-weight:900;
 }
-.hero-title span {
-  background: linear-gradient(120deg,#7ed2ff,#7a7bff,#c78bff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.hero-title span{
+  background:linear-gradient(120deg,#7ed2ff,#7a7bff,#c78bff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
-.subtext {
-  max-width: 600px;
-  color: #b8c2ff;
-  font-size: 1.05rem;
-  line-height: 1.6;
-  margin-bottom: 2rem;
+.subtext{
+  max-width:600px;
+  color:#b8c2ff;
+  line-height:1.6;
+  margin-bottom:2rem;
 }
-.cta-row { display: flex; flex-wrap: wrap; gap: 1rem; }
-@media (max-width: 880px) { .cta-row { justify-content: center; } }
+.cta-row{display:flex;gap:1rem;flex-wrap:wrap;}
+@media(max-width:900px){.cta-row{justify-content:center;}}
 
-.btn-primary {
-  padding: .95rem 2.3rem;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,.14);
-  color: #fff;
-  text-decoration: none;
-  font-weight: 700;
-  background: linear-gradient(135deg,#4f8bf9,#7a5af9);
-  box-shadow: 0 16px 36px rgba(86,118,255,.35);
-  transition: transform .22s ease, box-shadow .22s ease;
-}
-.btn-primary:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 22px 42px rgba(86,118,255,.55); }
-
-.btn-outline {
-  padding: .95rem 2rem;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,.18);
-  color: #e5e9ff;
+.btn-primary{
+  padding:.95rem 2.3rem;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.14);
+  color:#fff;
   text-decoration:none;
-  background: rgba(255,255,255,.05);
+  background:linear-gradient(135deg,#4f8bf9,#7a5af9);
+  box-shadow:0 16px 36px rgba(86,118,255,.35);
 }
-.btn-outline:hover { background: rgba(255,255,255,.12); }
-
-/* ===== Robot Feature Area ===== */
-.feature-robot {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  perspective: 1400px;
-
-  /* background matches page */
-  background: radial-gradient(120% 140% at 10% -10%, #151d3b, #05070f 60%);
-  border-radius: 20px;
-  padding: 1rem;
+.btn-outline{
+  padding:.95rem 2rem;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.18);
+  color:#e5e9ff;
+  text-decoration:none;
+  background:rgba(255,255,255,.05);
 }
 
-/* Robot image styling */
-.robot-mask {
-  width: 88%;
-  max-width: 560px;
-  object-fit: contain;
+/* ===== Robot panel (fixed) ===== */
 
-  /* tilt for 3D effect */
-  transform: perspective(1400px) rotateY(-10deg) rotateX(4deg);
-
-  /* depth shadows */
-  filter:
-    drop-shadow(0 40px 75px rgba(0,0,0,.55))
-    drop-shadow(-14px 18px 38px rgba(0,0,0,.45));
-
-  transition: transform .28s ease-out;
+/* container hugs image — no full-width pill bar */
+.feature-robot{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  perspective:1400px;
 }
 
-/* Hover tilt effect */
-.robot-mask:hover {
-  transform: perspective(1400px)
-    rotateY(-4deg)
-    rotateX(2deg)
-    scale(1.03);
+/* soft radial fade to blend with page color */
+.robot-wrap{
+  position:relative;
+  display:inline-block;
 }
-</style>
-</head>
-<body>
 
-<div class="shape pink"></div>
-<div class="shape teal"></div>
-<div class="shape blue"></div>
+.robot-wrap::after{
+  content:"";
+  position:absolute;
+  inset:-18% -18% -18% -18%;
+  background:radial-gradient(60% 60% at 50% 50%, rgba(21,29,59,.0), rgba(5,7,15,.85));
+  z-index:-1;
+  filter:blur(22px);
+}
 
-<section class="hero">
-
-  <!-- Text Content -->
-  <div>
-    <div class="tagline">PHYSICAL AI — HUMANOID SYSTEMS</div>
-
-    <h1 class="hero-title">
-      Intelligent Systems<br>
-      <span>Robotics Innovation Lab</span>
-    </h1>
-
-    <p class="subtext">
-      Explore human-centered robotics, cyber-physical intelligence,
-      and real-world embodied AI research — built for creators,
-      engineers, and future technologists.
-    </p>
-
-    <div class="cta-row">
-      <a class="btn-primary" href="#">Get Started →</a>
-      <a class="btn-outline" href="#">View Projects</a>
-    </div>
-  </div>
-
-  <!-- Robot Image -->
-  <div class="feature-robot">
-    <img src="4c959317-729a-4625-9799-71d3d2346d25.png" alt="Robot" class="robot-mask">
-  </div>
-
-</section>
-
-<script>
-/* Cursor-reactive parallax tilt */
-const robot = document.querySelector(".robot-mask");
-
-document.addEventListener("mousemove", e => {
-  const x = (window.innerWidth / 2 - e.clientX) / 40;
-  const y = (window.innerHeight / 2 - e.clientY) / 40;
-  robot.style.transform =
-    `perspective(1400px) rotateX(${y+2}deg) rotateY(${-x-6}deg)`;
-});
-
-document.addEventListener("mouseleave", () => {
-  robot.style.transform =
-    "perspective(1400px) rotateY(-10deg) rotateX(4deg)";
-});
-</script>
-
-</body>
-</html>
+/* image */
+.robot{
+  width:88%;
+  max-width:560px;
+  object-fit:contain;
+  transform:perspective(1400px) ro
