@@ -153,23 +153,6 @@ body{
   max-width:560px;
   object-fit:contain;
   display:block;
-
-  /* subtle glow to harmonize with background */
-  filter: drop-shadow(0 0 25px rgba(120,180,255,0.45));
-}
-
-/* overlay tint for color harmony */
-.robot-wrap::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(
-    120deg,
-    rgba(127,210,255,0.12),
-    rgba(199,139,255,0.12)
-  );
-  pointer-events:none;
-  border-radius:20px;
 }
 
 /* hover depth effect */
@@ -216,7 +199,7 @@ body{
     <div class="robot-wrap">
       <div class="robot-spotlight"></div>
 
-      <!-- transparent robot PNG -->
+      <!-- your transparent robot PNG -->
       <img
         class="robot"
         src="./robot-isolated-png-with-transparent-background_68880-69293-removebg-preview.png"
