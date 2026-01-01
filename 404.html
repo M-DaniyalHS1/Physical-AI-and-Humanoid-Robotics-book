@@ -84,7 +84,7 @@ body{
   background:rgba(255,255,255,.05);
 }
 
-/* ===== Robot panel (merged into layout) ===== */
+/* ===== Robot panel blended into layout ===== */
 
 .feature-robot{
   display:flex;
@@ -98,18 +98,19 @@ body{
   display:inline-block;
 }
 
-/* soft radial fade to blend edges */
+/* soft fade so image merges with background */
 .robot-wrap::after{
   content:"";
   position:absolute;
   inset:-18%;
   background:radial-gradient(60% 60% at 50% 55%,
       rgba(21,29,59,0) 30%,
-      rgba(5,7,15,.85) 100%);
+      rgba(5,7,15,.9) 100%);
   z-index:-1;
-  filter:blur(24px);
+  filter:blur(26px);
 }
 
+/* robot image */
 .robot{
   width:88%;
   max-width:560px;
@@ -165,8 +166,8 @@ body{
     <div class="robot-wrap">
       <img
         class="robot"
-        src="robot.png"
         alt="Robot"
+        src="https://raw.githubusercontent.com/M-DaniyalHS1/Physical-AI-and-Humanoid-Robotics-book/gh-pages/frontend/docs/robotpic.png"
       />
     </div>
   </div>
