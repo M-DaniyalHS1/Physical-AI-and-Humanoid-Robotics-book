@@ -117,15 +117,15 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T029 [P] [US2] Contract test for /chat/sessions endpoint in backend/tests/contract/test_chat.py
-- [ ] T030 [P] [US2] Contract test for /chat/sessions/{sessionId}/messages endpoint in backend/tests/contract/test_chat.py
-- [ ] T031 [P] [US2] Integration test for chatbot functionality in backend/tests/integration/test_chat.py
+- [X] T029 [P] [US2] Contract test for /chat/sessions endpoint in backend/tests/contract/test_chat.py
+- [X] T030 [P] [US2] Contract test for /chat/sessions/{sessionId}/messages endpoint in backend/tests/contract/test_chat.py
+- [X] T031 [P] [US2] Integration test for chatbot functionality in backend/tests/integration/test_chat.py
 
 ### Implementation for User Story 2
 
-- [ ] T032 [P] [US2] Create ChatSession model in backend/src/models/chat_session.py
-- [ ] T033 [P] [US2] Create ChatMessage model in backend/src/models/chat_message.py
-- [ ] T034 [US2] Implement ChatService using OpenAI Agent SDK and Chainkit in backend/src/services/chat_service.py
+- [X] T032 [P] [US2] Create ChatSession model in backend/src/models/chat_session.py
+- [X] T033 [P] [US2] Create ChatMessage model in backend/src/models/chat_message.py
+- [X] T034 [US2] Implement ChatService using OpenAI Agent SDK and Chainkit in backend/src/services/chat_service.py
 - [ ] T035 [US2] Implement ChatAPI in backend/src/api/chat.py with chat endpoints
 - [ ] T036 [US2] Add RAG functionality integrating with Qdrant vector store in backend/src/services/rag_service.py
 - [ ] T037 [US2] Implement "selected-text-only" answering mode in backend/src/services/chat_service.py
