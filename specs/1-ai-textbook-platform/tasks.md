@@ -126,9 +126,9 @@ Examples of foundational tasks (adjust based on your project):
 - [X] T032 [P] [US2] Create ChatSession model in backend/src/models/chat_session.py
 - [X] T033 [P] [US2] Create ChatMessage model in backend/src/models/chat_message.py
 - [X] T034 [US2] Implement ChatService using OpenAI Agent SDK and Chainkit in backend/src/services/chat_service.py
-- [ ] T035 [US2] Implement ChatAPI in backend/src/api/chat.py with chat endpoints
-- [ ] T036 [US2] Add RAG functionality integrating with Qdrant vector store in backend/src/services/rag_service.py
-- [ ] T037 [US2] Implement "selected-text-only" answering mode in backend/src/services/chat_service.py
+- [X] T035 [US2] Implement ChatAPI in backend/src/api/chat.py with chat endpoints
+- [X] T036 [US2] Add RAG functionality integrating with Qdrant vector store in backend/src/services/rag_service.py
+- [X] T037 [US2] Implement "selected-text-only" answering mode in backend/src/services/chat_service.py
 - [ ] T038 [US2] Create chat UI components in frontend/src/components/ChatWidget.js
 - [ ] T039 [US2] Implement chat session management in frontend/src/services/chat.js
 - [ ] T040 [US2] Integrate chat UI with backend API in frontend/src/components/ChatInterface.js

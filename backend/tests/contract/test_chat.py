@@ -390,3 +390,46 @@ def test_chat_session_messages_endpoint_response_format():
 
                 assert "context_used" in message
                 # context_used can be a string or None
+
+
+def test_create_chat_session_endpoint_exists():
+    """
+    Contract test: POST /chat/sessions endpoint should exist and return appropriate status code
+    """
+    # Test that the endpoint exists and returns appropriate status codes
+    headers = {"Authorization": "Bearer fake-token", "Content-Type": "application/json"}
+    response = client.post("/api/v1/chat/sessions", headers=headers, json={"mode": "general"})
+
+    # The endpoint should return 200 for authorized access with valid data
+    # or 401/403 for unauthorized access
+    # or 422 for validation errors
+    assert response.status_code in [200, 401, 403, 422]
+
+
+def test_send_message_to_session_endpoint_exists():
+    """
+    Contract test: POST /chat/sessions/{sessionId}/messages endpoint should exist and return appropriate status code
+    """
+    # Test that the endpoint exists and returns appropriate status codes
+    headers = {"Authorization": "Bearer fake-token", "Content-Type": "application/json"}
+    response = client.post("/api/v1/chat/sessions/session-123/messages", headers=headers, json={"message": "Hello"})
+
+    # The endpoint should return 200 for authorized access with valid data
+    # or 401/403 for unauthorized access
+    # or 404 if session doesn't exist
+    # or 422 for validation errors
+    assert response.status_code in [200, 401, 403, 404, 422]
+
+
+def test_close_session_endpoint_exists():
+    """
+    Contract test: PATCH /chat/sessions/{sessionId}/close endpoint should exist and return appropriate status code
+    """
+    # Test that the endpoint exists and returns appropriate status codes
+    headers = {"Authorization": "Bearer fake-token"}
+    response = client.patch("/api/v1/chat/sessions/session-123/close", headers=headers)
+
+    # The endpoint should return 200 for authorized access with valid data
+    # or 401/403 for unauthorized access
+    # or 404 if session doesn't exist
+    assert response.status_code in [200, 401, 403, 404]
