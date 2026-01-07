@@ -8,7 +8,8 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 // Configuration
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api/v1';
+// Use environment variable if available, otherwise use a default that can be configured at build time
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://your-backend-api-url/api/v1'; // This should be replaced with the actual backend URL
 const CHAT_ENDPOINT = `${API_BASE_URL}/chat`;
 
 // Create axios instance with default configuration
@@ -20,9 +21,15 @@ const apiClient = axios.create({
   },
 });
 
-// Request interceptor to add auth token if available
+// Add a request interceptor to handle API availability
 apiClient.interceptors.request.use(
   (config) => {
+    // Check if API_BASE_URL is still the placeholder
+    if (API_BASE_URL.includes('your-')) {
+      console.warn('API URL is not properly configured. Please set REACT_APP_API_BASE_URL in your environment.');
+      // In a real scenario, you might want to throw an error or use a fallback
+    }
+
     const token = localStorage.getItem('authToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -34,11 +41,16 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle common error cases
+// Add a response interceptor to handle common error cases
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    console.error('API request failed:', error);
+
+    if (error.code === 'ERR_NETWORK' || error.code === 'ECONNABORTED') {
+      // Network error - API might be down or misconfigured
+      console.error('Network error connecting to API. Check if REACT_APP_API_BASE_URL is properly configured.');
+    } else if (error.response?.status === 401) {
       // Unauthorized - clear auth token and redirect to login
       localStorage.removeItem('authToken');
       if (typeof window !== 'undefined') {
@@ -48,6 +60,7 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
 
 // Simple in-memory cache for chat sessions
 class ChatCache {

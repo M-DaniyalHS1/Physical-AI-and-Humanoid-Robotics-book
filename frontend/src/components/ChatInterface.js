@@ -33,10 +33,18 @@ const ChatInterface = ({ userId, contentId, selectedText = null }) => {
 
   // Load chat sessions for the user
   const loadChatSessions = async () => {
+    // Check if API is properly configured before attempting to load sessions
+    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+    if (!apiBaseUrl || apiBaseUrl.includes('your-')) {
+      setError('API is not configured properly. Please check your environment settings.');
+      setInitialized(true);
+      return;
+    }
+
     try {
       const userSessions = await getChatSessions({ limit: 10 });
       setSessions(userSessions);
-      
+
       // If there are existing sessions, load the most recent one
       if (userSessions.length > 0) {
         const mostRecentSession = userSessions[0]; // Assuming sessions are sorted by recency
@@ -46,7 +54,7 @@ const ChatInterface = ({ userId, contentId, selectedText = null }) => {
         // If no existing sessions, create a new one
         await createNewSession();
       }
-      
+
       setInitialized(true);
     } catch (err) {
       console.error('Error loading chat sessions:', err);
@@ -185,11 +193,11 @@ const ChatInterface = ({ userId, contentId, selectedText = null }) => {
         <div className="chat-controls">
           <div className="chat-mode-selector">
             <label htmlFor="chat-mode">Mode:</label>
-            <select 
+            <select
               id="chat-mode"
-              value={chatMode} 
+              value={chatMode}
               onChange={(e) => handleModeChange(e.target.value)}
-              disabled={loading}
+              disabled={loading || error?.includes('API is not configured')}
             >
               <option value="general">General</option>
               <option value="selected-text-only">Selected Text Only</option>
@@ -202,10 +210,16 @@ const ChatInterface = ({ userId, contentId, selectedText = null }) => {
         <div className="session-sidebar">
           {renderSessionList()}
         </div>
-        
+
         <div className="chat-main">
-          {activeSession ? (
-            <ChatWidget 
+          {error && error.includes('API is not configured') ? (
+            <div className="api-config-error" style={{ padding: '2rem', textAlign: 'center' }}>
+              <h3>Chat Service Not Available</h3>
+              <p>{error}</p>
+              <p>Please contact the administrator to configure the backend API properly.</p>
+            </div>
+          ) : activeSession ? (
+            <ChatWidget
               userId={userId}
               selectedText={selectedText}
               contentId={contentId}
