@@ -65,6 +65,7 @@ const config = {
           alt: 'Physical AI & Humanoid Robotics Logo',
           src: 'img/logo.svg',
         },
+        href: 'https://m-daniyalhs1.github.io/Physical-AI-and-Humanoid-Robotics-book/',
         items: [
           {
             type: 'docSidebar',

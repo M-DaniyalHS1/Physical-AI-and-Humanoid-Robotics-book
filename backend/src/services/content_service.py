@@ -13,6 +13,7 @@ import json
 from ..models.book_content import BookContent
 from ..models.content_metadata import ContentMetadata
 from ..models.progress import Progress
+from .rag_service import rag_service
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,8 @@ class ContentService:
     """
 
     def __init__(self):
-        pass
+        # Initialize the RAG service for enhanced content retrieval
+        self.rag_service = rag_service
 
     def get_all_content(self, db: Session, skip: int = 0, limit: int = 100) -> List[Dict[str, Any]]:
         """
@@ -132,6 +134,57 @@ class ContentService:
             logger.error(f"Error searching content with query '{query}': {e}")
             raise
 
+    def semantic_search_content(self, query: str, limit: int = 5) -> List[Dict[str, Any]]:
+        """
+        Perform semantic search on content using RAG functionality
+
+        Args:
+            query: Search query string for semantic search
+            limit: Maximum number of results to return
+
+        Returns:
+            List of content records as dictionaries with similarity scores
+        """
+        try:
+            # Generate embedding for the query
+            from openai import OpenAI
+            from ..core.config import settings
+
+            if settings.openai_api_key:
+                client = OpenAI(api_key=settings.openai_api_key)
+                response = client.embeddings.create(
+                    input=query,
+                    model="text-embedding-ada-002"
+                )
+                query_vector = response.data[0].embedding
+            else:
+                # Fallback to mock vector if OpenAI API is not available
+                query_vector = [0.1] * 1536
+
+            # Use RAG service to search for similar content
+            results = self.rag_service.search_content_by_text_similarity(
+                query_text=query,
+                query_vector=query_vector,
+                limit=limit
+            )
+
+            # Format results to match expected content structure
+            formatted_results = []
+            for result in results:
+                formatted_results.append({
+                    "id": result["id"],
+                    "content": result["content_text"],
+                    "metadata": result["metadata"],
+                    "similarity_score": result["score"]
+                })
+
+            logger.info(f"Semantic search found {len(formatted_results)} results for query: {query}")
+            return formatted_results
+        except Exception as e:
+            logger.error(f"Error performing semantic search with query '{query}': {e}")
+            # Return empty list if semantic search fails
+            return []
+
     def get_content_metadata(self, db: Session, content_id: str, level: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """
         Retrieve content metadata for a specific content ID and personalization level
@@ -148,7 +201,7 @@ class ContentService:
             query = db.query(ContentMetadata).filter(ContentMetadata.content_id == content_id)
             if level:
                 query = query.filter(ContentMetadata.personalization_level == level)
-            
+
             metadata = query.first()
             if metadata:
                 return metadata.to_dict()
@@ -204,9 +257,9 @@ class ContentService:
             logger.error(f"Error retrieving user progress for user_id {user_id}, content_id {content_id}: {e}")
             raise
 
-    def update_user_progress(self, db: Session, user_id: str, content_id: str, 
+    def update_user_progress(self, db: Session, user_id: str, content_id: str,
                            progress_percentage: float, time_spent_seconds: Optional[int] = None,
-                           completed_exercises: Optional[List[str]] = None, 
+                           completed_exercises: Optional[List[str]] = None,
                            bookmark_position: Optional[int] = None) -> bool:
         """
         Update user progress for specific content
@@ -275,6 +328,19 @@ class ContentService:
             db.add(content)
             db.commit()
             db.refresh(content)
+
+            # Index the content in the RAG service for semantic search
+            content_id = content.id
+            content_text = content.content
+            module = content.module
+            content_type = content.content_type
+
+            # Index in background to not block the response
+            try:
+                self.rag_service.index_textbook_content(content_id, content_text, module, content_type)
+            except Exception as e:
+                logger.error(f"Error indexing content {content_id} in RAG service: {e}")
+
             logger.info(f"Created new content with ID: {content.id}")
             return content.to_dict()
         except Exception as e:
@@ -298,14 +364,36 @@ class ContentService:
             content = db.query(BookContent).filter(BookContent.id == content_id).first()
             if not content:
                 return None
-            
+
+            # Store old values for RAG update
+            old_content_text = content.content
+            old_module = content.module
+            old_content_type = content.content_type
+
             # Update only the fields provided in content_data
             for key, value in content_data.items():
                 if hasattr(content, key):
                     setattr(content, key, value)
-            
+
             db.commit()
             db.refresh(content)
+
+            # Update the content in the RAG service if content changed
+            if (content.content != old_content_text or
+                content.module != old_module or
+                content.content_type != old_content_type):
+                try:
+                    # For simplicity, we'll re-index the content
+                    # In a real implementation, you might want to update the existing vector
+                    self.rag_service.index_textbook_content(
+                        content_id,
+                        content.content,
+                        content.module,
+                        content.content_type
+                    )
+                except Exception as e:
+                    logger.error(f"Error updating content {content_id} in RAG service: {e}")
+
             logger.info(f"Updated content with ID: {content.id}")
             return content.to_dict()
         except Exception as e:
@@ -328,7 +416,14 @@ class ContentService:
             content = db.query(BookContent).filter(BookContent.id == content_id).first()
             if not content:
                 return False
-            
+
+            # Remove the content from the RAG service
+            try:
+                self.rag_service.delete_content_by_id(content_id)
+            except Exception as e:
+                logger.error(f"Error removing content {content_id} from RAG service: {e}")
+                # Continue with deletion even if RAG removal fails
+
             db.delete(content)
             db.commit()
             logger.info(f"Deleted content with ID: {content_id}")
@@ -336,6 +431,44 @@ class ContentService:
         except Exception as e:
             logger.error(f"Error deleting book content: {e}")
             db.rollback()
+            return False
+
+    def batch_index_content(self, db: Session, content_ids: List[str]) -> bool:
+        """
+        Batch index multiple content items in the RAG service
+
+        Args:
+            db: Database session
+            content_ids: List of content IDs to index
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            # Fetch content from database
+            contents = db.query(BookContent).filter(BookContent.id.in_(content_ids)).all()
+
+            # Prepare content for batch indexing
+            content_list = []
+            for content in contents:
+                content_list.append({
+                    "content_id": content.id,
+                    "content_text": content.content,
+                    "module": content.module,
+                    "content_type": content.content_type
+                })
+
+            # Index in RAG service
+            success = self.rag_service.index_multiple_textbook_contents(content_list)
+
+            if success:
+                logger.info(f"Successfully batch indexed {len(content_list)} contents")
+            else:
+                logger.error(f"Failed to batch index {len(content_list)} contents")
+
+            return success
+        except Exception as e:
+            logger.error(f"Error in batch indexing: {e}")
             return False
 
 

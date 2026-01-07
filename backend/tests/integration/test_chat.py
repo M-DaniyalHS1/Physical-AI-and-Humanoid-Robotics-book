@@ -361,3 +361,199 @@ def test_chat_session_lifecycle():
         # The commit may not be called if the mock_close_session is patching the actual method
         # Instead, let's verify that the close_session method was called properly
         # We'll just ensure no exceptions are raised during the execution
+
+
+def test_create_session_api_endpoint():
+    """
+    Integration test: Test the POST /chat/sessions API endpoint
+    """
+    from src.api.chat import router
+    from fastapi.testclient import TestClient
+    from src.main import app
+    from src.api.auth import get_current_user
+    from src.models.database import get_db
+
+    # Add the router to the app for testing
+    app.include_router(router)
+
+    # Create test client with dependency overrides
+    def override_get_current_user():
+        mock_user = MagicMock(spec=User)
+        mock_user.id = "test-user-111"
+        return mock_user
+
+    def override_get_db():
+        mock_db = MagicMock(spec=Session)
+        mock_db.add.return_value = None
+        mock_db.commit.return_value = None
+        mock_db.refresh.side_effect = lambda x: x
+        yield mock_db
+
+    app.dependency_overrides[get_current_user] = override_get_current_user
+    app.dependency_overrides[get_db] = override_get_db
+
+    try:
+        # Mock the session creation in the service
+        with patch('src.services.chat_service.chat_service.create_chat_session') as mock_create_session:
+            mock_session = MagicMock(spec=ChatSession)
+            mock_session.id = "new-session-111"
+            mock_session.user_id = "test-user-111"
+            mock_session.session_start = datetime.now()
+            mock_session.selected_text = None
+            mock_session.mode = "general"
+            mock_session.is_active = True
+            mock_create_session.return_value = mock_session
+
+            # Create test client
+            client = TestClient(app)
+
+            # Test the API endpoint
+            headers = {"Authorization": "Bearer fake-token", "Content-Type": "application/json"}
+            response = client.post(
+                "/chat/sessions",
+                headers=headers,
+                json={"mode": "general"}
+            )
+
+            # Verify the response
+            assert response.status_code == 200
+            data = response.json()
+            assert data["id"] == "new-session-111"
+            assert data["user_id"] == "test-user-111"
+            assert data["mode"] == "general"
+    finally:
+        # Clear the dependency overrides
+        app.dependency_overrides.clear()
+
+
+def test_send_message_api_endpoint():
+    """
+    Integration test: Test the POST /chat/sessions/{sessionId}/messages API endpoint
+    """
+    from src.api.chat import router
+    from fastapi.testclient import TestClient
+    from src.main import app
+    from src.api.auth import get_current_user
+    from src.models.database import get_db
+
+    # Add the router to the app for testing
+    app.include_router(router)
+
+    # Create test client with dependency overrides
+    def override_get_current_user():
+        mock_user = MagicMock(spec=User)
+        mock_user.id = "test-user-222"
+        return mock_user
+
+    def override_get_db():
+        mock_db = MagicMock(spec=Session)
+        mock_db.add.return_value = None
+        mock_db.commit.return_value = None
+        mock_db.refresh.side_effect = lambda x: x
+        # Mock a chat session to verify ownership
+        mock_session = MagicMock(spec=ChatSession)
+        mock_session.id = "session-222"
+        mock_session.user_id = "test-user-222"
+        mock_db.query.return_value.filter.return_value.first.return_value = mock_session
+        yield mock_db
+
+    app.dependency_overrides[get_current_user] = override_get_current_user
+    app.dependency_overrides[get_db] = override_get_db
+
+    try:
+        # Mock the message processing in the service
+        with patch('src.services.chat_service.chat_service.process_user_message') as mock_process_message, \
+             patch('src.services.chat_service.chat_service.get_session_messages') as mock_get_messages:
+
+            # Mock the AI response
+            mock_process_message.return_value = "This is an AI response to your question."
+
+            # Mock the messages returned
+            mock_ai_message = MagicMock(spec=ChatMessage)
+            mock_ai_message.id = "ai-msg-222"
+            mock_ai_message.session_id = "session-222"
+            mock_ai_message.sender_type = "ai"
+            mock_ai_message.content = "This is an AI response to your question."
+            mock_ai_message.timestamp = datetime.now()
+            mock_ai_message.context_used = "Some textbook content"
+            mock_get_messages.return_value = [mock_ai_message]
+
+            # Create test client
+            client = TestClient(app)
+
+            # Test the API endpoint
+            headers = {"Authorization": "Bearer fake-token", "Content-Type": "application/json"}
+            response = client.post(
+                "/chat/sessions/session-222/messages",
+                headers=headers,
+                json={"message": "What is ROS 2?"}
+            )
+
+            # Verify the response
+            assert response.status_code == 200
+            data = response.json()
+            assert data["session_id"] == "session-222"
+            assert data["content"] == "This is an AI response to your question."
+            assert data["sender_type"] == "ai"
+    finally:
+        # Clear the dependency overrides
+        app.dependency_overrides.clear()
+
+
+def test_close_session_api_endpoint():
+    """
+    Integration test: Test the PATCH /chat/sessions/{sessionId}/close API endpoint
+    """
+    from src.api.chat import router
+    from fastapi.testclient import TestClient
+    from src.main import app
+    from src.api.auth import get_current_user
+    from src.models.database import get_db
+
+    # Add the router to the app for testing
+    app.include_router(router)
+
+    # Create test client with dependency overrides
+    def override_get_current_user():
+        mock_user = MagicMock(spec=User)
+        mock_user.id = "test-user-333"
+        return mock_user
+
+    def override_get_db():
+        mock_db = MagicMock(spec=Session)
+        mock_db.add.return_value = None
+        mock_db.commit.return_value = None
+        mock_db.refresh.side_effect = lambda x: x
+        # Mock a chat session to verify ownership
+        mock_session = MagicMock(spec=ChatSession)
+        mock_session.id = "session-333"
+        mock_session.user_id = "test-user-333"
+        mock_db.query.return_value.filter.return_value.first.return_value = mock_session
+        yield mock_db
+
+    app.dependency_overrides[get_current_user] = override_get_current_user
+    app.dependency_overrides[get_db] = override_get_db
+
+    try:
+        # Mock the session closing in the service
+        with patch('src.services.chat_service.chat_service.close_session') as mock_close_session:
+            mock_close_session.return_value = True
+
+            # Create test client
+            client = TestClient(app)
+
+            # Test the API endpoint
+            headers = {"Authorization": "Bearer fake-token"}
+            response = client.patch(
+                "/chat/sessions/session-333/close",
+                headers=headers
+            )
+
+            # Verify the response
+            assert response.status_code == 200
+            data = response.json()
+            assert data["session_id"] == "session-333"
+            assert data["is_active"] is False
+    finally:
+        # Clear the dependency overrides
+        app.dependency_overrides.clear()

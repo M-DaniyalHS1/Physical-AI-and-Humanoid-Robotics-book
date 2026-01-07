@@ -254,6 +254,127 @@ class ChatService:
 
         return ai_response
 
+    def process_user_message_selected_text_only(self, db: Session, session_id: str, user_message: str) -> str:
+        """
+        Process a user message in selected-text-only mode, focusing exclusively on the selected text
+
+        Args:
+            db: Database session
+            session_id: The ID of the chat session
+            user_message: The message from the user
+
+        Returns:
+            str: The AI-generated response based only on the selected text
+        """
+        # Validate inputs
+        if not session_id or not isinstance(session_id, str) or len(session_id.strip()) == 0:
+            raise ValueError("session_id must be a non-empty string")
+
+        if not user_message or not isinstance(user_message, str) or len(user_message.strip()) == 0:
+            raise ValueError("user_message must be a non-empty string")
+
+        if len(user_message.strip()) > 10000:  # Limit message length
+            raise ValueError("user_message is too long (max 10000 characters)")
+
+        # First, get the session to check its mode and selected text
+        session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
+        if not session:
+            raise ValueError(f"Session {session_id} not found")
+
+        # Verify that the session is in selected-text-only mode
+        if session.mode != "selected-text-only":
+            raise ValueError(f"Session {session_id} is not in selected-text-only mode")
+
+        # Verify that selected text exists
+        if not session.selected_text:
+            raise ValueError(f"Session {session_id} does not have selected text for selected-text-only mode")
+
+        # Add user message to session
+        self.add_message_to_session(db, session_id, "user", user_message)
+
+        # For selected-text-only mode, we'll use the selected text as the primary context
+        # Generate embedding for the selected text combined with the user query
+        combined_query = f"{session.selected_text} {user_message}"
+
+        try:
+            if self.openai_client:
+                response = self.openai_client.embeddings.create(
+                    input=combined_query,
+                    model="text-embedding-ada-002"
+                )
+                query_vector = response.data[0].embedding
+            else:
+                # Fallback to mock vector if OpenAI client is not available
+                query_vector = [0.1] * 1536
+        except Exception as e:
+            logger.error(f"Error generating embedding: {e}")
+            # Fallback to mock vector if embedding fails
+            query_vector = [0.1] * 1536
+
+        # Use the RAG service to find content similar to the selected text
+        # In selected-text-only mode, we want to find content that's most similar to the selected text
+        relevant_content = self.rag_service.search_content_by_text_similarity(
+            query_text=combined_query,
+            query_vector=query_vector,
+            limit=5  # Get more results to ensure we have relevant content
+        )
+
+        # For selected-text-only mode, we'll create a context that prioritizes the selected text
+        # and any closely related content
+        context_str = f"Selected Text: {session.selected_text}\n\n"
+
+        if relevant_content:
+            # Filter to only include content that is highly related to the selected text
+            # We'll use a higher threshold to ensure relevance
+            filtered_content = [item for item in relevant_content if item["score"] > 0.7]
+
+            if filtered_content:
+                context_str += "Related Content:\n"
+                for item in filtered_content:
+                    context_str += f"- {item['content_text']}\n\n"
+            else:
+                # If no highly relevant content found, just use the selected text
+                context_str = f"Selected Text: {session.selected_text}\n\n"
+                logger.info(f"No highly relevant content found for selected-text-only mode in session {session_id}")
+        else:
+            context_str = f"Selected Text: {session.selected_text}\n\n"
+            logger.warning(f"No content found for selected-text-only mode in session {session_id}")
+
+        # Prepare the prompt for the AI model with strict instructions for selected-text-only mode
+        system_prompt = f"""You are an AI assistant for a Physical AI & Humanoid Robotics textbook.
+        You are in SELECTED-TEXT-ONLY mode.
+        Answer the user's question based ONLY on the following selected text and closely related concepts.
+        Do not provide any information outside of the provided context.
+        If the selected text does not contain enough information to answer the question, acknowledge this limitation.
+        Selected Text and Related Content:
+        {context_str}"""
+
+        try:
+            if self.openai_client:
+                # Use OpenAI to generate a response based only on the selected text
+                response = self.openai_client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_message}
+                    ],
+                    temperature=0.3,  # Lower temperature for more consistent, focused responses
+                    max_tokens=500
+                )
+
+                ai_response = response.choices[0].message.content
+            else:
+                # Fallback response when OpenAI client is not available
+                ai_response = f"Based on the selected text: '{session.selected_text[:200]}...' [This is a mock response as OpenAI API is not configured]"
+        except Exception as e:
+            logger.error(f"Error generating AI response in selected-text-only mode: {e}")
+            ai_response = "I'm sorry, I encountered an error processing your request. Please try again later."
+
+        # Add AI response to session
+        self.add_message_to_session(db, session_id, "ai", ai_response, context_used=f"Selected Text: {session.selected_text}")
+
+        return ai_response
+
     def close_session(self, db: Session, session_id: str) -> bool:
         """
         Close a chat session
