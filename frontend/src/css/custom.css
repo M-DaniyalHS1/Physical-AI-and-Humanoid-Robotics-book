@@ -28,3 +28,236 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/* Chat Widget Styles */
+.chat-widget {
+  display: flex;
+  flex-direction: column;
+  height: 600px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: white;
+}
+
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chat-header {
+  padding: 1rem;
+  background-color: var(--ifm-color-primary);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header h3 {
+  margin: 0;
+}
+
+.chat-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.chat-mode-selector label {
+  margin-right: 0.5rem;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: #f9f9f9;
+}
+
+.message {
+  max-width: 80%;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  word-wrap: break-word;
+}
+
+.user-message {
+  align-self: flex-end;
+  background-color: #e3f2fd;
+  border-bottom-right-radius: 0;
+}
+
+.ai-message {
+  align-self: flex-start;
+  background-color: #f5f5f5;
+  border-bottom-left-radius: 0;
+}
+
+.system-message {
+  align-self: center;
+  background-color: #fff8e1;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-style: italic;
+}
+
+.message-timestamp {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 0.25rem;
+  text-align: right;
+}
+
+.chat-input-form {
+  display: flex;
+  padding: 1rem;
+  background-color: white;
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.chat-input-form input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  margin-right: 0.5rem;
+}
+
+.chat-input-form button {
+  padding: 0.5rem 1rem;
+  background-color: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.chat-input-form button:disabled {
+  background-color: var(--ifm-color-emphasis-200);
+  cursor: not-allowed;
+}
+
+.loading-indicator {
+  padding: 0.5rem;
+  font-style: italic;
+  color: #666;
+}
+
+.chat-error {
+  padding: 0.5rem;
+  color: #d32f2f;
+  font-size: 0.875rem;
+  text-align: center;
+  background-color: #ffebee;
+  border-radius: 4px;
+  margin: 0.5rem;
+}
+
+/* Chat Interface Styles */
+.chat-interface {
+  display: flex;
+  flex-direction: column;
+  height: 650px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: white;
+}
+
+.chat-interface-header {
+  padding: 1rem;
+  background-color: var(--ifm-color-primary);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-interface-header h2 {
+  margin: 0;
+}
+
+.chat-interface-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.session-sidebar {
+  width: 250px;
+  border-right: 1px solid var(--ifm-color-emphasis-300);
+  padding: 1rem;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+}
+
+.session-list h4 {
+  margin-top: 0;
+}
+
+.session-item {
+  padding: 0.5rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.session-item:hover {
+  background-color: #e3f2fd;
+}
+
+.session-item.active {
+  background-color: #bbdefb;
+  border-color: var(--ifm-color-primary);
+}
+
+.session-title {
+  font-weight: bold;
+}
+
+.session-meta {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.new-session-btn {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background-color: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.no-sessions {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 1rem;
+}
+
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.no-session-active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+  text-align: center;
+  color: #666;
+}
