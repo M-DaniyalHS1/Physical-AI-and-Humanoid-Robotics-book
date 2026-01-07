@@ -60,18 +60,21 @@ const config = {
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
         title: 'AI Textbook',
-        href: 'https://m-daniyalhs1.github.io/Physical-AI-and-Humanoid-Robotics-book/',
         logo: {
           alt: 'Physical AI & Humanoid Robotics Logo',
           src: 'img/logo.svg',
         },
-        href: 'https://m-daniyalhs1.github.io/Physical-AI-and-Humanoid-Robotics-book/',
         items: [
           {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
             label: 'Textbook',
+          },
+          {
+            to: '/chat',
+            label: 'AI Chat',
+            position: 'left',
           },
           {
             href: 'https://github.com/panaversity/ai-textbook-platform',

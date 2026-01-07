@@ -158,7 +158,7 @@ const ChatInterface = ({ userId, contentId, selectedText = null }) => {
           {sessions.map(session => (
             <li 
               key={session.id} 
-              className={`session-item ${activeSession?.id === session.id ? 'active' : ''}`}
+              className={`session-item ${(activeSession && activeSession.id) === session.id ? 'active' : ''}`}
               onClick={() => handleSessionSelect(session)}
             >
               <div className="session-title">
