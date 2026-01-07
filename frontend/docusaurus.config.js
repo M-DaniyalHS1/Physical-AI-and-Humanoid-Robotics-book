@@ -23,6 +23,7 @@ const config = {
 
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
+  trailingSlash: false,
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
@@ -59,6 +60,7 @@ const config = {
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
         title: 'AI Textbook',
+        href: 'https://m-daniyalhs1.github.io/Physical-AI-and-Humanoid-Robotics-book/',
         logo: {
           alt: 'Physical AI & Humanoid Robotics Logo',
           src: 'img/logo.svg',

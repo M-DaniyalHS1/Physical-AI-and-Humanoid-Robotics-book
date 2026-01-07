@@ -19,7 +19,10 @@ except ImportError:
     QDRANT_AVAILABLE = False
     # Define placeholder classes for testing when qdrant is not available
     class PointStruct:
-        pass
+        def __init__(self, id=None, vector=None, payload=None):
+            self.id = id
+            self.vector = vector
+            self.payload = payload
     class Distance:
         COSINE = "cosine"
     class VectorParams:
@@ -34,8 +37,12 @@ except ImportError:
         pass
     models = None
 
+from sqlalchemy.orm import Session
+from openai import OpenAI
+
 from ..core.config import settings
 from .qdrant_client import get_qdrant_client
+from ..models.book_content import BookContent
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +61,13 @@ class RAGService:
         else:
             self.client = None
         self.collection_name = TEXTBOOK_CONTENT_COLLECTION
+        # Initialize OpenAI client for generating embeddings
+        if settings.openai_api_key:
+            self.openai_client = OpenAI(api_key=settings.openai_api_key)
+            logger.info("RAGService initialized with OpenAI client for embeddings")
+        else:
+            self.openai_client = None
+            logger.warning("OpenAI API key not found. Embedding functionality will use mock responses.")
 
     def ensure_collection_exists(self, vector_size: int = 1536) -> bool:
         """
@@ -474,141 +488,204 @@ class RAGService:
             logger.error(f"Error updating content vector: {e}")
             return False
 
-    def index_textbook_content(self, content_id: str, content_text: str, module: str, content_type: str) -> bool:
+    def generate_embedding(self, text: str) -> List[float]:
         """
-        Index textbook content with proper metadata for RAG functionality
+        Generate embedding for the given text using OpenAI
 
         Args:
-            content_id: Unique ID for the content
-            content_text: The actual text content to be indexed
-            module: The module this content belongs to (e.g., 'ROS 2', 'Gazebo & Unity')
-            content_type: The type of content (e.g., 'text', 'video', 'exercise')
+            text: Text to generate embedding for
+
+        Returns:
+            List of floats representing the embedding vector
+        """
+        if not self.openai_client:
+            # Fallback to mock embedding if OpenAI client is not available
+            logger.warning("OpenAI client not available, using mock embedding")
+            return [0.0] * 1536
+
+        try:
+            response = self.openai_client.embeddings.create(
+                input=text,
+                model="text-embedding-ada-002"
+            )
+            return response.data[0].embedding
+        except Exception as e:
+            logger.error(f"Error generating embedding for text: {e}")
+            # Fallback to mock embedding if API call fails
+            return [0.0] * 1536
+
+    def index_all_content(self, db: Session, batch_size: int = 100) -> bool:
+        """
+        Index all textbook content from PostgreSQL to Qdrant vector store
+
+        Args:
+            db: Database session
+            batch_size: Number of records to process in each batch
 
         Returns:
             bool: True if successful, False otherwise
         """
         if not QDRANT_AVAILABLE:
-            logger.warning("Qdrant not available, skipping content indexing")
+            logger.error("Qdrant not available, cannot index content")
             return False
 
         try:
-            # This method would typically generate embeddings for the content
-            # For now, we'll use a mock implementation since the actual embedding generation
-            # would require the OpenAI API or another embedding service
-            # In a real implementation, you would call an embedding service here
-            from openai import OpenAI
-            if settings.openai_api_key:
-                client = OpenAI(api_key=settings.openai_api_key)
-                response = client.embeddings.create(
-                    input=content_text,
-                    model="text-embedding-ada-002"
-                )
-                vector = response.data[0].embedding
-            else:
-                # Fallback to mock vector if OpenAI API is not available
-                vector = [0.1] * 1536
+            # Get total count of content
+            total_content = db.query(BookContent).count()
+            logger.info(f"Starting to index {total_content} content items")
 
-            # Prepare metadata for the content
+            # Process content in batches
+            offset = 0
+            indexed_count = 0
+
+            while offset < total_content:
+                # Get a batch of content
+                content_batch = db.query(BookContent).offset(offset).limit(batch_size).all()
+
+                # Prepare points for batch upsert
+                points = []
+                for content in content_batch:
+                    # Generate embedding for the content
+                    content_text = f"{content.title} {content.content}"
+                    embedding = self.generate_embedding(content_text)
+
+                    # Create metadata
+                    metadata = {
+                        "title": content.title,
+                        "module": content.module,
+                        "chapter_number": content.chapter_number,
+                        "content_type": content.content_type,
+                        "version": content.version,
+                        "created_at": content.created_at.isoformat() if content.created_at else None,
+                        "updated_at": content.updated_at.isoformat() if content.updated_at else None
+                    }
+
+                    # Create point structure
+                    point = PointStruct(
+                        id=content.id,
+                        vector=embedding,
+                        payload={
+                            "content_id": content.id,
+                            "content_text": content_text,
+                            "metadata": metadata
+                        }
+                    )
+                    points.append(point)
+
+                # Upsert the batch to Qdrant
+                if points:
+                    self.client.upsert(
+                        collection_name=self.collection_name,
+                        points=points
+                    )
+                    indexed_count += len(points)
+                    logger.info(f"Indexed batch: {offset} to {offset + len(points)}, total indexed: {indexed_count}")
+
+                # Move to next batch
+                offset += batch_size
+
+            logger.info(f"Successfully indexed {indexed_count} content items to Qdrant")
+            return True
+
+        except Exception as e:
+            logger.error(f"Error indexing content to Qdrant: {e}")
+            return False
+
+    def index_single_content(self, db: Session, content_id: str) -> bool:
+        """
+        Index a single content item from PostgreSQL to Qdrant vector store
+
+        Args:
+            db: Database session
+            content_id: ID of the content to index
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not QDRANT_AVAILABLE:
+            logger.error("Qdrant not available, cannot index content")
+            return False
+
+        try:
+            # Get the content from database
+            content = db.query(BookContent).filter(BookContent.id == content_id).first()
+            if not content:
+                logger.error(f"Content with ID {content_id} not found in database")
+                return False
+
+            # Generate embedding for the content
+            content_text = f"{content.title} {content.content}"
+            embedding = self.generate_embedding(content_text)
+
+            # Create metadata
             metadata = {
-                "module": module,
-                "content_type": content_type,
-                "indexed_at": str(self.get_current_timestamp())
+                "title": content.title,
+                "module": content.module,
+                "chapter_number": content.chapter_number,
+                "content_type": content.content_type,
+                "version": content.version,
+                "created_at": content.created_at.isoformat() if content.created_at else None,
+                "updated_at": content.updated_at.isoformat() if content.updated_at else None
             }
 
-            # Add the content to the vector store
-            success = self.add_content_to_vector_store(
-                content_id=content_id,
-                content_text=content_text,
-                vector=vector,
-                metadata=metadata
+            # Create point structure
+            point = PointStruct(
+                id=content.id,
+                vector=embedding,
+                payload={
+                    "content_id": content.id,
+                    "content_text": content_text,
+                    "metadata": metadata
+                }
             )
 
-            if success:
-                logger.info(f"Successfully indexed content {content_id} for RAG")
-            else:
-                logger.error(f"Failed to index content {content_id} for RAG")
+            # Upsert to Qdrant
+            self.client.upsert(
+                collection_name=self.collection_name,
+                points=[point]
+            )
 
-            return success
+            logger.info(f"Successfully indexed content {content_id} to Qdrant")
+            return True
 
         except Exception as e:
-            logger.error(f"Error indexing textbook content: {e}")
+            logger.error(f"Error indexing content {content_id} to Qdrant: {e}")
             return False
 
-    def index_multiple_textbook_contents(self, contents: List[Dict[str, any]]) -> bool:
+    def sync_content_changes(self, db: Session, content_id: str) -> bool:
         """
-        Index multiple textbook contents in a batch operation
+        Sync content changes between PostgreSQL and Qdrant vector store
 
         Args:
-            contents: List of dictionaries containing content_id, content_text, module, and content_type
+            db: Database session
+            content_id: ID of the content to sync
 
         Returns:
             bool: True if successful, False otherwise
         """
         if not QDRANT_AVAILABLE:
-            logger.warning("Qdrant not available, skipping batch content indexing")
+            logger.error("Qdrant not available, cannot sync content")
             return False
 
         try:
-            if not contents:
-                logger.warning("Empty content list provided for batch indexing")
-                return True
+            # Get the content from database
+            content = db.query(BookContent).filter(BookContent.id == content_id).first()
+            if not content:
+                # Content might have been deleted, so delete from Qdrant too
+                success = self.delete_content_by_id(content_id)
+                if success:
+                    logger.info(f"Deleted content {content_id} from Qdrant (content no longer exists in DB)")
+                return success
 
-            # Prepare content for batch addition
-            content_list = []
-            for content in contents:
-                content_id = content["content_id"]
-                content_text = content["content_text"]
-                module = content["module"]
-                content_type = content["content_type"]
-
-                # Generate embedding for the content
-                from openai import OpenAI
-                if settings.openai_api_key:
-                    client = OpenAI(api_key=settings.openai_api_key)
-                    response = client.embeddings.create(
-                        input=content_text,
-                        model="text-embedding-ada-002"
-                    )
-                    vector = response.data[0].embedding
-                else:
-                    # Fallback to mock vector if OpenAI API is not available
-                    vector = [0.1] * 1536
-
-                # Prepare metadata
-                metadata = {
-                    "module": module,
-                    "content_type": content_type,
-                    "indexed_at": str(self.get_current_timestamp())
-                }
-
-                content_list.append({
-                    "content_id": content_id,
-                    "content_text": content_text,
-                    "vector": vector,
-                    "metadata": metadata
-                })
-
-            # Add all contents to the vector store in a batch operation
-            success = self.batch_add_content_to_vector_store(content_list)
-
+            # Update the content in Qdrant
+            success = self.index_single_content(db, content_id)
             if success:
-                logger.info(f"Successfully indexed {len(contents)} contents for RAG")
-            else:
-                logger.error(f"Failed to index {len(contents)} contents for RAG")
-
+                logger.info(f"Synced content {content_id} between PostgreSQL and Qdrant")
             return success
 
         except Exception as e:
-            logger.error(f"Error indexing multiple textbook contents: {e}")
+            logger.error(f"Error syncing content {content_id}: {e}")
             return False
-
-    def get_current_timestamp(self):
-        """
-        Helper method to get the current timestamp
-        """
-        from datetime import datetime
-        return datetime.utcnow()
-
 
 # Singleton instance of RAG Service
 rag_service = RAGService()

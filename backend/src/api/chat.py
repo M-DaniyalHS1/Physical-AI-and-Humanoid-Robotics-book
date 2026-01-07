@@ -8,6 +8,7 @@ from src.models.database import get_db
 from src.api.auth import get_current_user
 from src.models.user import User
 from src.services.chat_service import chat_service
+from pydantic import BaseModel
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
@@ -186,6 +187,84 @@ def get_chat_session_messages(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+# Pydantic model for request body
+class ChatMessageRequest(BaseModel):
+    content: str
+    session_id: Optional[str] = None
+    selected_text: Optional[str] = None
+    mode: Optional[str] = "general"  # "general" or "selected-text-only"
+
+@router.post("/sessions/{session_id}/messages", response_model=dict)
+def send_chat_message(
+    session_id: str,
+    message_request: ChatMessageRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Send a message in a specific chat session and get an AI response.
+    """
+    # Verify that the session belongs to the current user
+    session = db.query(ChatSession).filter(
+        ChatSession.id == session_id,
+        ChatSession.user_id == current_user.id
+    ).first()
+
+    if not session:
+        raise HTTPException(status_code=404, detail="Chat session not found")
+
+    # Process the user's message and get AI response
+    try:
+        ai_response = chat_service.process_user_message(
+            db=db,
+            session_id=session_id,
+            user_message=message_request.content
+        )
+
+        return {
+            "session_id": session_id,
+            "response": ai_response
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing message: {str(e)}")
+
+@router.post("/messages", response_model=dict)
+def start_new_chat(
+    message_request: ChatMessageRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Start a new chat session and send the first message.
+    """
+    # Create a new chat session
+    session = chat_service.create_chat_session(
+        user_id=current_user.id,
+        selected_text=message_request.selected_text,
+        mode=message_request.mode
+    )
+    db.add(session)
+    db.commit()
+    db.refresh(session)
+
+    # Process the user's message and get AI response
+    try:
+        ai_response = chat_service.process_user_message(
+            db=db,
+            session_id=session.id,
+            user_message=message_request.content
+        )
+
+        return {
+            "session_id": session.id,
+            "response": ai_response
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing message: {str(e)}")
 
 @router.patch("/sessions/{session_id}/close", response_model=dict)
 def close_chat_session(

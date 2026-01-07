@@ -20,19 +20,19 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd docs
+          cd frontend
           npm ci
 
       - name: Build website
         run: |
-          cd docs
+          cd frontend
           npm run build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/build
+          publish_dir: ./frontend/build
           publish_branch: gh-pages  # Deploy to a separate branch for GitHub Pages
           # Optional: Specify a custom domain
           # custom_domain: your-domain.com
