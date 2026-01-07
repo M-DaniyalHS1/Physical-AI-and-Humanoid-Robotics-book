@@ -187,11 +187,35 @@ class ChatService:
 
         # Prepare context for the AI model
         context_str = ""
-        if relevant_content:
-            context_snippets = [item["content_text"] for item in relevant_content]
-            context_str = "\n\n".join(context_snippets)
+        if session.mode == "selected-text-only" and session.selected_text:
+            # In selected-text-only mode, prioritize the selected text over other content
+            # If the selected text is similar to content in the database, use it; otherwise, use the selected text as context
+            context_str = f"Selected text: {session.selected_text}"
+
+            # If we have relevant content that matches the selected text, we can add it too
+            if relevant_content:
+                # Check if any of the retrieved content is related to the selected text
+                # For now, we'll add the selected text as primary context and include relevant content if it's related
+                related_content = []
+                for item in relevant_content:
+                    content_text = item["content_text"]
+                    # Simple check if the content is related to the selected text
+                    if (session.selected_text.lower() in content_text.lower() or
+                        any(word in content_text.lower() for word in session.selected_text.lower().split()[:5])):  # Check first 5 words
+                        related_content.append(content_text)
+
+                if related_content:
+                    context_str += "\n\nAdditional related content from textbook:\n" + "\n\n".join(related_content)
+                else:
+                    # If no related content found, just use the selected text
+                    context_str = f"Selected text: {session.selected_text}\n\nIMPORTANT: Answer only based on this selected text."
         else:
-            context_str = "No specific textbook content found. Please provide general information about Physical AI & Humanoid Robotics."
+            # General mode - use all relevant content as before
+            if relevant_content:
+                context_snippets = [item["content_text"] for item in relevant_content]
+                context_str = "\n\n".join(context_snippets)
+            else:
+                context_str = "No specific textbook content found. Please provide general information about Physical AI & Humanoid Robotics."
 
         # Prepare the prompt for the AI model
         system_prompt = f"""You are an AI assistant for a Physical AI & Humanoid Robotics textbook.
@@ -201,8 +225,8 @@ class ChatService:
 
         # If in selected-text-only mode, emphasize using only the selected text
         if session.mode == "selected-text-only" and session.selected_text:
-            system_prompt += f"\n\nIMPORTANT: The user has selected specific text: '{session.selected_text}'. " \
-                            "Please focus your answer specifically on this selected text and related concepts."
+            system_prompt += f"\n\nIMPORTANT: Answer the user's question based ONLY on the selected text provided above. " \
+                            "Do not use any other knowledge or information beyond what is in the selected text and related content."
 
         try:
             if self.openai_client:
