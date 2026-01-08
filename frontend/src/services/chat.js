@@ -9,7 +9,7 @@ import axios from 'axios';
 
 // Configuration
 // Use environment variable if available, otherwise use a default that can be configured at build time
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://your-backend-api-url/api/v1'; // This should be replaced with the actual backend URL
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://physical-ai-and-humanoid-robotics-book-production-dc39.up.railway.app/'; // This should be replaced with the actual backend URL
 const CHAT_ENDPOINT = `${API_BASE_URL}/chat`;
 
 // Create axios instance with default configuration
