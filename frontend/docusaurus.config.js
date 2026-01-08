@@ -53,6 +53,14 @@ const config = {
     ],
   ],
 
+  plugins: [
+    // Add any other plugins as needed
+  ],
+
+  themes: [
+    // ... your other themes
+  ],
+
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
