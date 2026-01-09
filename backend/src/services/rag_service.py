@@ -39,6 +39,7 @@ except ImportError:
 
 from sqlalchemy.orm import Session
 from openai import OpenAI
+import requests
 
 from ..core.config import settings
 from .qdrant_client import get_qdrant_client
@@ -490,7 +491,7 @@ class RAGService:
 
     def generate_embedding(self, text: str) -> List[float]:
         """
-        Generate embedding for the given text using OpenAI
+        Generate embedding for the given text using Hugging Face API
 
         Args:
             text: Text to generate embedding for
@@ -498,21 +499,58 @@ class RAGService:
         Returns:
             List of floats representing the embedding vector
         """
-        if not self.openai_client:
-            # Fallback to mock embedding if OpenAI client is not available
-            logger.warning("OpenAI client not available, using mock embedding")
-            return [0.0] * 1536
+        if settings.huggingface_api_key:
+            try:
+                # Using Hugging Face Inference API with a sentence transformer model
+                hf_api_url = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
 
-        try:
-            response = self.openai_client.embeddings.create(
-                input=text,
-                model="text-embedding-ada-002"
-            )
-            return response.data[0].embedding
-        except Exception as e:
-            logger.error(f"Error generating embedding for text: {e}")
-            # Fallback to mock embedding if API call fails
-            return [0.0] * 1536
+                headers = {
+                    "Authorization": f"Bearer {settings.huggingface_api_key}",
+                    "Content-Type": "application/json"
+                }
+
+                payload = {
+                    "inputs": text,
+                    "options": {
+                        "wait_for_model": True  # Wait for model to load if it's not loaded
+                    }
+                }
+
+                response = requests.post(hf_api_url, headers=headers, json=payload)
+
+                if response.status_code == 200:
+                    embedding = response.json()
+                    # Ensure the embedding is a flat list of floats
+                    if isinstance(embedding, list) and len(embedding) > 0:
+                        if isinstance(embedding[0], list):
+                            # If it's a nested list, flatten it
+                            return embedding[0]
+                        return embedding
+                    else:
+                        logger.error(f"Hugging Face API returned unexpected format: {embedding}")
+                        return [0.0] * 384  # Default size for all-MiniLM-L6-v2
+                else:
+                    logger.error(f"Hugging Face API error: {response.status_code} - {response.text}")
+                    return [0.0] * 384  # Default size for all-MiniLM-L6-v2
+            except Exception as e:
+                logger.error(f"Error generating embedding with Hugging Face: {e}")
+                return [0.0] * 384  # Default size for all-MiniLM-L6-v2
+        elif self.openai_client:
+            # Fallback to OpenAI if Hugging Face API key is not available
+            logger.warning("Hugging Face API key not available, falling back to OpenAI")
+            try:
+                response = self.openai_client.embeddings.create(
+                    input=text,
+                    model="text-embedding-ada-002"
+                )
+                return response.data[0].embedding
+            except Exception as e:
+                logger.error(f"Error generating embedding for text: {e}")
+                return [0.0] * 1536
+        else:
+            # Fallback to mock embedding if neither service is available
+            logger.warning("No embedding service available, using mock embedding")
+            return [0.0] * 384  # Default to Hugging Face model size
 
     def index_all_content(self, db: Session, batch_size: int = 100) -> bool:
         """

@@ -71,6 +71,8 @@ def check_service_readiness() -> Dict[str, bool]:
         "jwt": bool(settings.jwt_secret_key),
         "qdrant": bool(settings.qdrant_url and settings.qdrant_api_key),
         "openai": bool(settings.openai_api_key),
+        "huggingface": bool(settings.huggingface_api_key),
+        "google_gemini": bool(settings.google_gemini_api_key),
     }
 
 

@@ -11,6 +11,8 @@ import uuid
 from sqlalchemy.orm import Session
 
 from openai import OpenAI
+import google.generativeai as genai
+import requests
 from ..models.chat_session import ChatSession
 from ..models.chat_message import ChatMessage
 from .rag_service import rag_service
@@ -32,7 +34,16 @@ class ChatService:
             logger.info("ChatService initialized with OpenAI client")
         else:
             self.openai_client = None
-            logger.warning("OpenAI API key not found. Chat functionality will use mock responses.")
+            logger.warning("OpenAI API key not found.")
+
+        # Initialize Google Gemini client
+        if settings.google_gemini_api_key:
+            genai.configure(api_key=settings.google_gemini_api_key)
+            self.gemini_model = genai.GenerativeModel('gemini-pro')
+            logger.info("ChatService initialized with Google Gemini client")
+        else:
+            self.gemini_model = None
+            logger.warning("Google Gemini API key not found.")
 
     def create_chat_session(self, user_id: str, selected_text: Optional[str] = None, mode: str = "general") -> ChatSession:
         """
@@ -228,9 +239,23 @@ class ChatService:
             system_prompt += f"\n\nIMPORTANT: Answer the user's question based ONLY on the selected text provided above. " \
                             "Do not use any other knowledge or information beyond what is in the selected text and related content."
 
+        # Combine system prompt and user message for Gemini
+        full_prompt = f"{system_prompt}\n\nUser question: {user_message}"
+
         try:
-            if self.openai_client:
-                # Use OpenAI to generate a response based on the context
+            if self.gemini_model:
+                # Use Google Gemini to generate a response based on the context
+                response = self.gemini_model.generate_content(
+                    full_prompt,
+                    generation_config=genai.types.GenerationConfig(
+                        temperature=0.7,
+                        max_output_tokens=500
+                    )
+                )
+                ai_response = response.text
+            elif self.openai_client:
+                # Fallback to OpenAI if Gemini is not available
+                logger.warning("Google Gemini not available, falling back to OpenAI")
                 response = self.openai_client.chat.completions.create(
                     model="gpt-3.5-turbo",
                     messages=[
@@ -240,11 +265,10 @@ class ChatService:
                     temperature=0.7,
                     max_tokens=500
                 )
-
                 ai_response = response.choices[0].message.content
             else:
-                # Fallback response when OpenAI client is not available
-                ai_response = f"Based on the textbook content: {context_str[:200]}... [This is a mock response as OpenAI API is not configured]"
+                # Fallback response when no AI client is available
+                ai_response = f"Based on the textbook content: {context_str[:200]}... [This is a mock response as no AI service is configured]"
         except Exception as e:
             logger.error(f"Error generating AI response: {e}")
             ai_response = "I'm sorry, I encountered an error processing your request. Please try again later."
@@ -349,9 +373,23 @@ class ChatService:
         Selected Text and Related Content:
         {context_str}"""
 
+        # Combine system prompt and user message for Gemini
+        full_prompt = f"{system_prompt}\n\nUser question: {user_message}"
+
         try:
-            if self.openai_client:
-                # Use OpenAI to generate a response based only on the selected text
+            if self.gemini_model:
+                # Use Google Gemini to generate a response based only on the selected text
+                response = self.gemini_model.generate_content(
+                    full_prompt,
+                    generation_config=genai.types.GenerationConfig(
+                        temperature=0.3,  # Lower temperature for more consistent, focused responses
+                        max_output_tokens=500
+                    )
+                )
+                ai_response = response.text
+            elif self.openai_client:
+                # Fallback to OpenAI if Gemini is not available
+                logger.warning("Google Gemini not available, falling back to OpenAI for selected-text-only mode")
                 response = self.openai_client.chat.completions.create(
                     model="gpt-3.5-turbo",
                     messages=[
@@ -361,11 +399,10 @@ class ChatService:
                     temperature=0.3,  # Lower temperature for more consistent, focused responses
                     max_tokens=500
                 )
-
                 ai_response = response.choices[0].message.content
             else:
-                # Fallback response when OpenAI client is not available
-                ai_response = f"Based on the selected text: '{session.selected_text[:200]}...' [This is a mock response as OpenAI API is not configured]"
+                # Fallback response when no AI client is available
+                ai_response = f"Based on the selected text: '{session.selected_text[:200]}...' [This is a mock response as no AI service is configured]"
         except Exception as e:
             logger.error(f"Error generating AI response in selected-text-only mode: {e}")
             ai_response = "I'm sorry, I encountered an error processing your request. Please try again later."
