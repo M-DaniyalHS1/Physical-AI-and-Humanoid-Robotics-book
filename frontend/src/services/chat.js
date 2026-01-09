@@ -114,6 +114,7 @@ export const useChatService = () => {
   /**
    * Create a new chat session
    * @param {Object} sessionData - Session configuration data
+   * @param {string} sessionData.content - Initial content/message for the session
    * @param {string} sessionData.selectedText - Optional selected text to focus on
    * @param {string} sessionData.mode - Chat mode ('general' or 'selected-text-only')
    * @returns {Promise<Object>} Created chat session
@@ -124,7 +125,7 @@ export const useChatService = () => {
 
     try {
       const response = await apiClient.post('/chat/messages', {
-        content: 'Hello, I would like to start a chat session.',
+        content: sessionData.content || 'Hello, I would like to start a chat session.',
         selected_text: sessionData.selectedText || null,
         mode: sessionData.mode || 'general'
       });

@@ -33,6 +33,10 @@ class Settings(BaseSettings):
     qdrant_api_key: Optional[str] = None
     openai_api_key: Optional[str] = None
 
+    # Alternative AI Service URLs
+    huggingface_api_key: Optional[str] = None
+    google_gemini_api_key: Optional[str] = None
+
     # Redis (for rate limiting and caching)
     redis_url: Optional[str] = None
 
