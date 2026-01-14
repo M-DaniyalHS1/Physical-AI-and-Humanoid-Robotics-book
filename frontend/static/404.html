@@ -9,7 +9,7 @@
       padding: 0;
       box-sizing: border-box;
     }
-    
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
       background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -20,7 +20,7 @@
       color: #242526;
       line-height: 1.6;
     }
-    
+
     .container {
       text-align: center;
       max-width: 800px;
@@ -30,7 +30,7 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       margin: 1.5rem;
     }
-    
+
     .logo {
       width: 100px;
       height: 100px;
@@ -43,26 +43,26 @@
       color: white;
       font-size: 2.5rem;
     }
-    
+
     h1 {
       font-size: 3.5rem;
       margin-bottom: 1rem;
       color: #1d2d5f;
       font-weight: 700;
     }
-    
+
     .subtitle {
       font-size: 1.5rem;
       margin-bottom: 2rem;
       color: #6c757d;
     }
-    
+
     .message {
       font-size: 1.2rem;
       margin-bottom: 2.5rem;
       color: #495057;
     }
-    
+
     .btn {
       display: inline-block;
       background: #4f8bf9;
@@ -76,29 +76,42 @@
       border: none;
       cursor: pointer;
       box-shadow: 0 4px 6px rgba(79, 139, 249, 0.3);
+      margin: 0.5rem;
     }
-    
+
     .btn:hover {
       background: #3a7ae0;
       transform: translateY(-2px);
       box-shadow: 0 6px 12px rgba(79, 139, 249, 0.4);
     }
-    
+
+    .btn-secondary {
+      background: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+
     .robot-icon {
       font-size: 4rem;
       margin: 1.5rem 0;
       color: #4f8bf9;
     }
-    
+
+    .navigation-links {
+      margin-top: 2rem;
+    }
+
     @media (max-width: 768px) {
       h1 {
         font-size: 2.5rem;
       }
-      
+
       .subtitle {
         font-size: 1.2rem;
       }
-      
+
       .message {
         font-size: 1rem;
       }
@@ -113,11 +126,15 @@
     <h1>404 - Page Not Found</h1>
     <div class="subtitle">Oops! The page you're looking for doesn't exist.</div>
     <div class="message">
-      It seems you've ventured into uncharted territory in our AI & Robotics universe. 
+      It seems you've ventured into uncharted territory in our AI & Robotics universe.
       Don't worry, our navigation system will guide you back to the learning path.
     </div>
     <div class="robot-icon">🤖</div>
-    <a href="./" class="btn">Return to Textbook</a>
+    <div class="navigation-links">
+      <a href="./" class="btn">Return to Textbook</a>
+      <a href="./docs/intro" class="btn btn-secondary">Intro to Textbook</a>
+      <a href="./docs/ros2" class="btn btn-secondary">ROS 2 Module</a>
+    </div>
   </div>
 </body>
 </html>
