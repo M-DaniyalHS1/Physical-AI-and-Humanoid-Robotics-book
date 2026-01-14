@@ -117,23 +117,23 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
 
-- [X] T029 [P] [US2] Contract test for /chat/sessions endpoint in backend/tests/contract/test_chat.py
-- [X] T030 [P] [US2] Contract test for /chat/sessions/{sessionId}/messages endpoint in backend/tests/contract/test_chat.py
-- [X] T031 [P] [US2] Integration test for chatbot functionality in backend/tests/integration/test_chat.py
+- [ ] T029 [P] [US2] Contract test for /chat/sessions endpoint in backend/tests/contract/test_chat.py
+- [ ] T030 [P] [US2] Contract test for /chat/sessions/{sessionId}/messages endpoint in backend/tests/contract/test_chat.py
+- [ ] T031 [P] [US2] Integration test for chatbot functionality in backend/tests/integration/test_chat.py
 
 ### Implementation for User Story 2
 
-- [X] T032 [P] [US2] Create ChatSession model in backend/src/models/chat_session.py
-- [X] T033 [P] [US2] Create ChatMessage model in backend/src/models/chat_message.py
-- [X] T034 [US2] Implement ChatService using OpenAI Agent SDK and Chainkit in backend/src/services/chat_service.py
-- [X] T035 [US2] Implement ChatAPI in backend/src/api/chat.py with chat endpoints
-- [X] T036 [US2] Add RAG functionality integrating with Qdrant vector store in backend/src/services/rag_service.py
-- [X] T037 [US2] Implement "selected-text-only" answering mode in backend/src/services/chat_service.py
-- [X] T038 [US2] Create chat UI components in frontend/src/components/ChatWidget.js
-- [X] T039 [US2] Implement chat session management in frontend/src/services/chat.js
-- [X] T040 [US2] Integrate chat UI with backend API in frontend/src/components/ChatInterface.js
+- [ ] T032 [P] [US2] Create ChatSession model in backend/src/models/chat_session.py
+- [ ] T033 [P] [US2] Create ChatMessage model in backend/src/models/chat_message.py
+- [ ] T034 [US2] Implement ChatService using OpenAI Agent SDK and Chainkit in backend/src/services/chat_service.py
+- [ ] T035 [US2] Implement ChatAPI in backend/src/api/chat.py with chat endpoints
+- [ ] T036 [US2] Add RAG functionality integrating with Qdrant vector store in backend/src/services/rag_service.py
+- [ ] T037 [US2] Implement "selected-text-only" answering mode in backend/src/services/chat_service.py
+- [ ] T038 [US2] Create chat UI components in frontend/src/components/ChatWidget.js
+- [ ] T039 [US2] Implement chat session management in frontend/src/services/chat.js
+- [ ] T040 [US2] Integrate chat UI with backend API in frontend/src/components/ChatInterface.js
 
-**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
+**Note**: User Story 2 implementation has been deferred to a separate branch to ensure User Story 1 stability. Will be implemented after User Story 1 is validated.
 
 ---
 
@@ -162,7 +162,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T052 [US3] Implement personalization service integration in frontend/src/services/personalization.js
 - [ ] T053 [US3] Add personalization toggle to content display in frontend/src/components/ContentDisplay.js
 
-**Checkpoint**: At this point, User Stories 1, 2 AND 3 should all work independently
+**Note**: User Story 3 implementation has been deferred to a separate branch to ensure User Story 1 stability. Will be implemented after User Story 1 is validated.
 
 ---
 
@@ -187,7 +187,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T061 [US4] Implement translation service integration in frontend/src/services/translation.js
 - [ ] T062 [US4] Add language toggle to content display in frontend/src/components/ContentDisplay.js
 
-**Checkpoint**: All priority 1 and 2 user stories should now be independently functional
+**Note**: User Story 4 implementation has been deferred to a separate branch to ensure User Story 1 stability. Will be implemented after User Story 1 is validated.
 
 ---
 
@@ -209,7 +209,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T067 [US5] Create documentation for agent skill usage in docs/agent_integration.md
 - [ ] T068 [US5] Implement agent skill browser UI in frontend/src/components/AgentSkillBrowser.js
 
-**Checkpoint**: All user stories should now be independently functional
+**Note**: User Story 5 implementation has been deferred to a separate branch to ensure User Story 1 stability. Will be implemented after User Story 1 is validated.
 
 ---
 
@@ -269,22 +269,6 @@ Examples of foundational tasks (adjust based on your project):
 - All tests for a user story marked [P] can run in parallel
 - Models within a story marked [P] can run in parallel
 - Different user stories can be worked on in parallel by different team members
-
----
-
-## Parallel Example: User Story 1
-
-```bash
-# Launch all tests for User Story 1 together (if tests requested):
-T015: Contract test for /content endpoint in backend/tests/contract/test_content.py
-T016: Contract test for /content/{id} endpoint in backend/tests/contract/test_content.py
-T017: Integration test for content retrieval in backend/tests/integration/test_content.py
-
-# Launch all models for User Story 1 together:
-T018: Create BookContent model in backend/src/models/book_content.py
-T019: Create ContentMetadata model in backend/src/models/content_metadata.py
-T020: Create Progress model in backend/src/models/progress.py
-```
 
 ---
 
