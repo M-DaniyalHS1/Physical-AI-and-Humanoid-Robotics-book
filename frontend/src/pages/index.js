@@ -12,36 +12,21 @@ function HomepageHeader() {
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
-        <div className="row">
-          <div className="col col--6">
-            <div className={styles.greetingSection}>
-              <h1 className="hero__title">{siteConfig.title}</h1>
-              <p className="hero__subtitle">{siteConfig.tagline}</p>
-              <div className={styles.introText}>
-                <p>Welcome to the future of technical education! This AI-native textbook platform combines traditional learning with cutting-edge artificial intelligence to teach Physical AI & Humanoid Robotics.</p>
-              </div>
-              <div className={styles.buttons}>
-                <Link
-                  className="button button--secondary button--lg"
-                  to="/docs/intro">
-                  Start Reading - 5 min ⏱️
-                </Link>
-                <Link
-                  className="button button--primary button--lg margin-left--md"
-                  to="/chat">
-                  Meet AI Assistant 🤖
-                  </Link>
-              </div>
-            </div>
-          </div>
-          <div className="col col--6 text--center">
-            <div className={styles.heroImageContainer}>
-              <img
-                src="/img/robot-book-cover.svg"
-                alt="Physical AI and Humanoid Robotics Book Cover"
-                className={styles.heroImage}
-              />
-            </div>
+        <div className="text--center">
+          <div className={styles.tagline}>DIGITAL BRAIN · PHYSICAL BODY</div>
+          <h1 className="hero__title">{siteConfig.title}</h1>
+          <p className="hero__subtitle">Learn to build embodied intelligence using ROS 2, simulation with Isaac/Gazebo, and modern Vision‑Language‑Action models.</p>
+          <div className={styles.ctaRow}>
+            <Link
+              className="button button--secondary button--lg"
+              to="/docs/intro">
+              START LEARNING
+            </Link>
+            <Link
+              className="button button--primary button--lg margin-left--md"
+              to="/docs/intro">
+              VIEW CURRICULUM
+            </Link>
           </div>
         </div>
       </div>
@@ -57,134 +42,185 @@ export default function Home() {
       description="Bridging the gap between digital AI and physical robots">
       <HomepageHeader />
       <main>
-        <section className={styles.features}>
-          <div className="container padding-vert--xl">
+        {/* Curriculum Modules Section */}
+        <section id="modules" className={styles.modulesSection}>
+          <div className="container padding-vert--lg">
             <div className="text--center padding-bottom--lg">
-              <Heading as="h2">Why This Book Is Different</Heading>
-              <p className="subtitle">Experience the next generation of technical learning</p>
+              <Heading as="h2">Curriculum Modules</Heading>
+              <p className={styles.sectionDesc}>A four‑part progression from robotics foundations to full embodied AI systems.</p>
             </div>
             <div className="row">
-              <div className="col col--4">
-                <div className="card-demo">
-                  <div className="card">
-                    <div className="card__header">
-                      <h3>🤖 AI-Powered Learning</h3>
-                    </div>
-                    <div className="card__body">
-                      <p>
-                        Interact with our intelligent assistant to get personalized explanations,
-                        adaptive learning paths, and instant answers to your questions.
-                      </p>
-                    </div>
-                  </div>
+              <div className="col col--3">
+                <div className={clsx("card", styles.card)}>
+                  <small>01</small>
+                  <h3>The Nervous System</h3>
+                  <ul>
+                    <li>ROS 2 nodes & topics</li>
+                    <li>Middleware & DDS</li>
+                    <li>Robot communication</li>
+                  </ul>
+                  <span className={clsx(styles.status, styles.online)}>ONLINE</span>
                 </div>
               </div>
-              <div className="col col--4">
-                <div className="card-demo">
-                  <div className="card">
-                    <div className="card__header">
-                      <h3>🌐 Multilingual Support</h3>
-                    </div>
-                    <div className="card__body">
-                      <p>
-                        Access content in multiple languages including Urdu translation,
-                        making advanced robotics education accessible to a global audience.
-                      </p>
-                    </div>
-                  </div>
+              <div className="col col--3">
+                <div className={clsx("card", styles.card)}>
+                  <small>02</small>
+                  <h3>The Digital Twin</h3>
+                  <ul>
+                    <li>URDF modeling</li>
+                    <li>Gazebo / Isaac Sim</li>
+                    <li>Physics & sensors</li>
+                  </ul>
+                  <span className={clsx(styles.status, styles.loading)}>LOADING</span>
                 </div>
               </div>
-              <div className="col col--4">
-                <div className="card-demo">
-                  <div className="card">
-                    <div className="card__header">
-                      <h3>📚 Comprehensive Coverage</h3>
-                    </div>
-                    <div className="card__body">
-                      <p>
-                        From fundamentals to advanced topics in Physical AI and Humanoid Robotics,
-                        with hands-on examples and real-world applications.
-                      </p>
-                    </div>
-                  </div>
+              <div className="col col--3">
+                <div className={clsx("card", styles.card)}>
+                  <small>03</small>
+                  <h3>The Brain</h3>
+                  <ul>
+                    <li>LLMs for planning</li>
+                    <li>Reasoning loops</li>
+                    <li>Tool use</li>
+                  </ul>
+                  <span className={clsx(styles.status, styles.locked)}>LOCKED</span>
+                </div>
+              </div>
+              <div className="col col--3">
+                <div className={clsx("card", styles.card)}>
+                  <small>04</small>
+                  <h3>The Eyes</h3>
+                  <ul>
+                    <li>Vision models</li>
+                    <li>VLA pipelines</li>
+                    <li>Spatial awareness</li>
+                  </ul>
+                  <span className={clsx(styles.status, styles.locked)}>LOCKED</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="padding-vert--lg">
-          <div className="container">
+        {/* Hardware Requirements Section */}
+        <section id="hardware" className={styles.hardwareSection}>
+          <div className="container padding-vert--lg">
+            <div className="text--center padding-bottom--lg">
+              <Heading as="h2">Hardware Requirements</Heading>
+              <p className={styles.sectionDesc}>Choose the setup that fits your budget, goals, and access level.</p>
+            </div>
             <div className="row">
-              <div className="col col--8 col--offset-2 text--center">
-                <Heading as="h2">About This Project</Heading>
-                <div className={styles.projectInfo}>
-                  <p>
-                    This AI-native textbook platform represents the future of technical education.
-                    By integrating Retrieval-Augmented Generation (RAG) technology, personalization algorithms,
-                    and multilingual support, we're creating an immersive learning experience that adapts to each student.
-                  </p>
-                  <p>
-                    Our mission is to democratize access to advanced robotics education by combining traditional
-                    textbook pedagogy with AI-driven insights, interactive experiences, and global accessibility.
-                  </p>
-                  <div className={styles.techHighlights}>
-                    <span className="badge badge--primary">RAG Technology</span>
-                    <span className="badge badge--secondary margin-left--sm">Personalization</span>
-                    <span className="badge badge--success margin-left--sm">Multilingual</span>
-                    <span className="badge badge--info margin-left--sm">Interactive</span>
-                  </div>
+              <div className="col col--3">
+                <div className={clsx("card", styles.card)}>
+                  <h3>☁️ Cloud Simulation</h3>
+                  <p>Low cost, browser‑based or rented GPUs.</p>
+                  <ul>
+                    <li>Good for beginners</li>
+                    <li>Limited real‑time performance</li>
+                  </ul>
                 </div>
               </div>
+              <div className="col col--3">
+                <div className={clsx("card", styles.card)}>
+                  <h3>💻 Mid‑Range Station</h3>
+                  <p>Recommended personal setup.</p>
+                  <ul>
+                    <li>RTX‑class GPU</li>
+                    <li>Fast iteration</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="col col--3">
+                <div className={clsx("card", styles.card)}>
+                  <h3>🧪 High‑End Lab</h3>
+                  <p>Maximum performance.</p>
+                  <ul>
+                    <li>Multi‑GPU</li>
+                    <li>Large simulations</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="col col--3">
+                <div className={clsx("card", styles.card)}>
+                  <h3>🏫 University Lab</h3>
+                  <p>Free access if available.</p>
+                  <ul>
+                    <li>Shared resources</li>
+                    <li>Scheduled usage</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Comparison Table */}
+            <div className="padding-vert--lg">
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Option</th>
+                    <th>Cost</th>
+                    <th>Performance</th>
+                    <th>Access</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Cloud</td>
+                    <td>Low</td>
+                    <td>Medium</td>
+                    <td>Any device</td>
+                  </tr>
+                  <tr>
+                    <td>Mid‑Range</td>
+                    <td>Medium</td>
+                    <td>High</td>
+                    <td>Personal</td>
+                  </tr>
+                  <tr>
+                    <td>High‑End</td>
+                    <td>High</td>
+                    <td>Very High</td>
+                    <td>Lab</td>
+                  </tr>
+                  <tr>
+                    <td>University</td>
+                    <td>Free</td>
+                    <td>High</td>
+                    <td>Shared</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </section>
 
-        <section className={styles.testimonials}>
-          <div className="container padding-vert--xl">
+        {/* Decision Helper Section */}
+        <section id="decision" className={styles.decisionSection}>
+          <div className="container padding-vert--lg">
+            <div className="text--center padding-bottom--lg">
+              <Heading as="h2">Decision Helper</Heading>
+              <p className={styles.sectionDesc}>Find the best path based on your situation.</p>
+            </div>
             <div className="row">
-              <div className="col col--10 col--offset-1">
-                <Heading as="h3" className="text--center padding-bottom--lg">What Learners Are Saying</Heading>
-                <div className="row">
-                  <div className="col col--4">
-                    <div className="card">
-                      <div className="card__body text--center">
-                        <p>"An excellent resource for understanding the intersection of AI and robotics. The interactive AI assistant makes learning so much easier!"</p>
-                        <small>- Robotics Engineer</small>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col col--4">
-                    <div className="card">
-                      <div className="card__body text--center">
-                        <p>"The multilingual support is a game-changer. Finally, technical content accessible to a wider audience."</p>
-                        <small>- AI Researcher</small>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col col--4">
-                    <div className="card">
-                      <div className="card__body text--center">
-                        <p>"The combination of traditional textbook content with AI-powered explanations creates a truly unique learning experience."</p>
-                        <small>- Computer Science Student</small>
-                      </div>
-                    </div>
-                  </div>
+              <div className="col col--4">
+                <div className={clsx("card", styles.card)}>
+                  <h3>Student</h3>
+                  <p>Use university lab or cloud simulation.</p>
+                </div>
+              </div>
+              <div className="col col--4">
+                <div className={clsx("card", styles.card)}>
+                  <h3>Solo Developer</h3>
+                  <p>Mid‑range workstation recommended.</p>
+                </div>
+              </div>
+              <div className="col col--4">
+                <div className={clsx("card", styles.card)}>
+                  <h3>Research Group</h3>
+                  <p>High‑end lab for large experiments.</p>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-
-        <section className={styles.ctaSection}>
-          <div className="container text--center padding-vert--xl">
-            <Heading as="h2">Ready to Explore the Future of Robotics?</Heading>
-            <p>Join thousands of learners advancing their knowledge in Physical AI and Humanoid Robotics</p>
-            <Link
-              className="button button--primary button--lg margin-top--md"
-              to="/docs/intro">
-              Begin Your Journey
-            </Link>
           </div>
         </section>
       </main>
