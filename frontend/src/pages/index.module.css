@@ -1,0 +1,157 @@
+/* stylelint-disable docusaurus/copyright-header */
+
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+.heroBanner {
+  padding: 4rem 0;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a2a6c, #2a4d69, #4b86b4);
+  color: white;
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 2rem;
+    text-align: center;
+  }
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+@media screen and (max-width: 996px) {
+  .buttons {
+    justify-content: center;
+  }
+}
+
+.features {
+  background: linear-gradient(to bottom, #ffffff, #f0f8ff);
+}
+
+.card-demo {
+  height: 100%;
+  margin-bottom: 1rem;
+}
+
+.card-demo .card {
+  height: 100%;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+}
+
+.card-demo .card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+.card-demo .card__header h3 {
+  color: #1a2a6c;
+  margin-bottom: 0.5rem;
+}
+
+.card-demo .card__header {
+  background: linear-gradient(to right, #e3f2fd, #bbdefb);
+  color: #1a2a6c;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  padding: 1.5rem;
+}
+
+.card-demo .card__body {
+  padding: 1.5rem;
+}
+
+.heroImageContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.heroImage {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  border: 5px solid rgba(255,255,255,0.2);
+}
+
+.testimonials {
+  background: linear-gradient(to bottom, #f0f8ff, #e3f2fd);
+}
+
+.greetingSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding-right: 2rem;
+}
+
+@media screen and (max-width: 996px) {
+  .greetingSection {
+    padding-right: 0;
+    padding-bottom: 2rem;
+    text-align: center;
+  }
+}
+
+.introText {
+  margin: 1.5rem 0;
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.projectInfo {
+  margin-top: 1.5rem;
+}
+
+.projectInfo p {
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #333;
+}
+
+.techHighlights {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.ctaSection {
+  background: linear-gradient(135deg, #2a4d69, #4b86b4);
+  color: white;
+  margin-top: 2rem;
+}
+
+.ctaSection h2 {
+  color: white;
+}
+
+.ctaSection p {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+}
