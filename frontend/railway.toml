@@ -7,3 +7,7 @@ numReplicas = 1
 healthcheckPath = "/health"  # Use health check endpoint from main.py
 healthcheckTimeout = 120   # Timeout in seconds
 restartPolicyType = "always"
+
+# Custom 404 page configuration
+# Note: The 404.html page is available in the static directory
+# This page will be served when users visit non-existent routes
