@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Physical AI BookCourse</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --panel: #121821;
+      --text: #e6e9ef;
+      --muted: #9aa4b2;
+      --accent: #4cc9f0;
+      --accent2: #80ffdb;
+      --border: #1f2937;
+      --good: #22c55e;
+      --warn: #facc15;
+      --lock: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.2rem; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(11,15,20,0.85); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .brand { font-weight: 700; letter-spacing: 0.5px; }
+    .nav-links { display: flex; gap: 1.2rem; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { padding: 0.45rem 0.8rem; border: 1px solid var(--border); border-radius: 8px; }
+
+    /* HERO */
+    .hero {
+      padding: 5rem 0 4rem;
+      background: radial-gradient(800px 400px at 50% -50%, #1a2230 0%, transparent 70%);
+      text-align: center;
+    }
+    .hero h1 { font-size: clamp(2.2rem, 4vw, 3.5rem); margin-bottom: 0.5rem; }
+    .tagline { color: var(--accent2); letter-spacing: 0.15em; font-size: 0.85rem; }
+    .hero p { max-width: 720px; margin: 1rem auto 2rem; color: var(--muted); }
+    .cta-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      padding: 0.9rem 1.4rem; border-radius: 10px; font-weight: 600;
+      border: 1px solid var(--border); background: var(--panel);
+    }
+    .btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #001018; border: none; }
+
+    section { padding: 4rem 0; }
+    h2 { margin-bottom: 0.5rem; }
+    .section-desc { color: var(--muted); max-width: 700px; }
+
+    /* MODULES */
+    .modules { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 1.2rem; margin-top: 2rem; }
+    .card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 1.4rem;
+      display: flex; flex-direction: column; gap: 0.6rem;
+    }
+    .card small { color: var(--muted); letter-spacing: 0.1em; }
+    .status { align-self: flex-start; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.7rem; font-weight: 700; }
+    .online { background: rgba(34,197,94,0.15); color: var(--good); }
+    .loading { background: rgba(250,204,21,0.15); color: var(--warn); }
+    .locked { background: rgba(239,68,68,0.15); color: var(--lock); }
+
+    /* HARDWARE */
+    .tiers { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 1.2rem; margin-top: 2rem; }
+
+    /* TABLE */
+    table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+    th, td { border: 1px solid var(--border); padding: 0.7rem; text-align: center; }
+    th { background: #0f1620; }
+
+    /* DECISION */
+    .decision { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 1.2rem; margin-top: 2rem; }
+
+    footer { border-top: 1px solid var(--border); padding: 2rem 0; color: var(--muted); text-align: center; }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container nav-inner">
+      <div class="brand">🤖 Physical AI</div>
+      <div class="nav-links">
+        <a href="#modules">Modules</a>
+        <a href="#hardware">Hardware</a>
+        <a href="#deploy">Deployment</a>
+        <a href="#tutorials">Tutorials</a>
+        <a href="#" class="nav-cta">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="tagline">DIGITAL BRAIN · PHYSICAL BODY</div>
+      <h1>Physical AI BookCourse</h1>
+      <p>Learn to build embodied intelligence using ROS 2, simulation with Isaac/Gazebo, and modern Vision‑Language‑Action models.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="#modules">START LEARNING</a>
+        <a class="btn" href="#modules">VIEW CURRICULUM</a>
+      </div>
+    </div>
+  </header>
+
+  <section id="modules">
+    <div class="container">
+      <h2>Curriculum Modules</h2>
+      <p class="section-desc">A four‑part progression from robotics foundations to full embodied AI systems.</p>
+      <div class="modules">
+        <div class="card">
+          <small>01</small>
+          <h3>The Nervous System</h3>
+          <ul>
+            <li>ROS 2 nodes & topics</li>
+            <li>Middleware & DDS</li>
+            <li>Robot communication</li>
+          </ul>
+          <span class="status online">ONLINE</span>
+        </div>
+        <div class="card">
+          <small>02</small>
+          <h3>The Digital Twin</h3>
+          <ul>
+            <li>URDF modeling</li>
+            <li>Gazebo / Isaac Sim</li>
+            <li>Physics & sensors</li>
+          </ul>
+          <span class="status loading">LOADING</span>
+        </div>
+        <div class="card">
+          <small>03</small>
+          <h3>The Brain</h3>
+          <ul>
+            <li>LLMs for planning</li>
+            <li>Reasoning loops</li>
+            <li>Tool use</li>
+          </ul>
+          <span class="status locked">LOCKED</span>
+        </div>
+        <div class="card">
+          <small>04</small>
+          <h3>The Eyes</h3>
+          <ul>
+            <li>Vision models</li>
+            <li>VLA pipelines</li>
+            <li>Spatial awareness</li>
+          </ul>
+          <span class="status locked">LOCKED</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="hardware">
+    <div class="container">
+      <h2>Hardware Requirements</h2>
+      <p class="section-desc">Choose the setup that fits your budget, goals, and access level.</p>
+      <div class="tiers">
+        <div class="card">
+          <h3>☁️ Cloud Simulation</h3>
+          <p>Low cost, browser‑based or rented GPUs.</p>
+          <ul><li>Good for beginners</li><li>Limited real‑time performance</li></ul>
+        </div>
+        <div class="card">
+          <h3>💻 Mid‑Range Station</h3>
+          <p>Recommended personal setup.</p>
+          <ul><li>RTX‑class GPU</li><li>Fast iteration</li></ul>
+        </div>
+        <div class="card">
+          <h3>🧪 High‑End Lab</h3>
+          <p>Maximum performance.</p>
+          <ul><li>Multi‑GPU</li><li>Large simulations</li></ul>
+        </div>
+        <div class="card">
+          <h3>🏫 University Lab</h3>
+          <p>Free access if available.</p>
+          <ul><li>Shared resources</li><li>Scheduled usage</li></ul>
+        </div>
+      </div>
+
+      <table>
+        <tr><th>Option</th><th>Cost</th><th>Performance</th><th>Access</th></tr>
+        <tr><td>Cloud</td><td>Low</td><td>Medium</td><td>Any device</td></tr>
+        <tr><td>Mid‑Range</td><td>Medium</td><td>High</td><td>Personal</td></tr>
+        <tr><td>High‑End</td><td>High</td><td>Very High</td><td>Lab</td></tr>
+        <tr><td>University</td><td>Free</td><td>High</td><td>Shared</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section id="decision">
+    <div class="container">
+      <h2>Decision Helper</h2>
+      <p class="section-desc">Find the best path based on your situation.</p>
+      <div class="decision">
+        <div class="card"><h3>Student</h3><p>Use university lab or cloud simulation.</p></div>
+        <div class="card"><h3>Solo Developer</h3><p>Mid‑range workstation recommended.</p></div>
+        <div class="card"><h3>Research Group</h3><p>High‑end lab for large experiments.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">© 2026 Physical AI BookCourse — Build minds for machines.</div>
+  </footer>
+</body>
+</html>
