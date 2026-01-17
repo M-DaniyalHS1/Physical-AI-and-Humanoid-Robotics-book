@@ -43,7 +43,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/M-DaniyalHS1/Physical-AI-and-Humanoid-Robotics-book/tree/main/frontend',
         },
         blog: false, // Disable blog if not needed
         theme: {
@@ -85,7 +85,7 @@ const config = {
             position: 'left',
           },
           {
-            href: 'https://github.com/panaversity/ai-textbook-platform',
+            href: 'https://github.com/M-DaniyalHS1/Physical-AI-and-Humanoid-Robotics-book',
             label: 'GitHub',
             position: 'right',
           },
@@ -125,12 +125,12 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/panaversity/ai-textbook-platform',
+                href: 'https://github.com/M-DaniyalHS1/Physical-AI-and-Humanoid-Robotics-book',
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Panaversity Hackathon Project. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} AI-Powered Physical AI & Humanoid Robotics Textbook. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,
