@@ -1,4 +1,4 @@
-# AI-Powered Physical AI & Humanoid Robotics Textbook
+# AI-Powered Physical AI & Humanoid Robotics Textbook ([Live Website](https://m-daniyalhs1.github.io/Physical-AI-and-Humanoid-Robotics-book/))
 
 This is an AI-native textbook platform that teaches Physical AI & Humanoid Robotics with RAG chatbot, personalization, and Urdu translation capabilities.
 
@@ -53,7 +53,7 @@ The frontend is configured for deployment to GitHub Pages using GitHub Actions:
 1. Ensure the GitHub Actions workflow file `.github/workflows/deploy.yml` exists (created automatically)
 2. The workflow will automatically build and deploy the site when changes are pushed to the main branch
 3. Make sure GitHub Pages is enabled in your repository settings (Settings > Pages > Source: GitHub Actions)
-4. The site will be available at: https://m-daniyalhs1.github.io/Physical-AI-and-Humanoid-Robotics-book/
+4. The site will be available at: https://m-daniyalhs1.github.io/Physical-AI-and-Humanoid-Robotics-book/ (visit our [live site](https://m-daniyalhs1.github.io/Physical-AI-and-Humanoid-Robotics-book/))
 
 ## Architecture
 
